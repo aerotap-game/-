@@ -1,418 +1,226 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FinPulse | Учет бизнеса</title>
-    <script src="https://telegram.org"></script>
-    <style>
-        :root {
-            --bg-main: #0b0f17;
-            --bg-card: #131a26;
-            --bg-input: #1a2333;
-            --border: rgba(255, 255, 255, 0.08);
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent-blue: #3b82f6;
-            --accent-green: #10b981;
-            --accent-red: #f43f5e;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", Roboto, sans-serif; }
-        body { background-color: var(--bg-main); color: var(--text-primary); min-height: 100vh; display: flex; justify-content: center; padding-bottom: 32px; }
-        .app-container { width: 100%; max-width: 480px; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
-        .user-info { display: flex; align-items: center; gap: 10px; }
-        .avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-blue), #6366f1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; overflow: hidden; border: 1px solid var(--border); }
-        .avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .user-meta h1 { font-size: 16px; font-weight: 700; }
-        .user-meta p { font-size: 12px; color: var(--text-secondary); }
-        .badge-demo { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.3); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
-        .periods { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--bg-card); padding: 4px; border-radius: 14px; border: 1px solid var(--border); gap: 4px; }
-        .period-btn { background: none; border: none; color: var(--text-secondary); padding: 9px 4px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .period-btn.active { background: var(--accent-blue); color: #fff; box-shadow: 0 2px 10px rgba(59, 130, 246, 0.35); }
-        .main-card { background: linear-gradient(145deg, #161f30 0%, #111722 100%); border: 1px solid var(--border); border-radius: 22px; padding: 20px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4); }
-        .profit-label { font-size: 13px; color: var(--text-secondary); font-weight: 500; margin-bottom: 6px; }
-        .profit-value { font-size: 36px; font-weight: 800; letter-spacing: -1px; margin-bottom: 18px; }
-        .profit-value.negative { color: var(--accent-red); }
-        .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding-top: 14px; border-top: 1px solid var(--border); }
-        .metric-item span { display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; }
-        .metric-item strong { font-size: 14px; font-weight: 700; }
-        .val-inc { color: var(--accent-green); }
-        .val-exp { color: var(--accent-red); }
-        .val-margin { color: var(--accent-blue); }
-        .ratio-bar { height: 8px; background: var(--bg-input); border-radius: 6px; overflow: hidden; display: flex; margin-top: 16px; }
-        .ratio-inc { background: var(--accent-green); height: 100%; transition: width 0.35s ease; }
-        .ratio-exp { background: var(--accent-red); height: 100%; transition: width 0.35s ease; }
-        .actions-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .btn-action { border: none; border-radius: 16px; padding: 15px; font-size: 15px; font-weight: 700; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.1s; }
-        .btn-action:active { transform: scale(0.96); }
-        .btn-income { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.25); }
-        .btn-expense { background: linear-gradient(135deg, #f43f5e, #e11d48); box-shadow: 0 6px 20px rgba(244, 63, 94, 0.25); }
-        .section-title { font-size: 15px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
-        .tx-list { display: flex; flex-direction: column; gap: 10px; }
-        .tx-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-        .tx-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
-        .tx-icon { width: 42px; height: 42px; border-radius: 12px; background: var(--bg-input); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
-        .tx-details { min-width: 0; }
-        .tx-cat { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .tx-meta { font-size: 11px; color: var(--text-secondary); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .tx-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-        .tx-amount { font-size: 15px; font-weight: 700; }
-        .btn-del { background: rgba(255, 255, 255, 0.06); border: none; color: var(--text-secondary); width: 30px; height: 30px; border-radius: 8px; cursor: pointer; font-size: 14px; }
-        .footer-tools { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
-        .btn-tool { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); padding: 13px; border-radius: 14px; font-size: 13px; font-weight: 600; cursor: pointer; }
-        .btn-tool.danger { color: var(--accent-red); }
-        .modal-backdrop { position: fixed; inset: 0; background: rgba(5, 8, 15, 0.85); backdrop-filter: blur(8px); display: none; align-items: flex-end; justify-content: center; z-index: 999; }
-        .modal-backdrop.open { display: flex; }
-        .modal { background: var(--bg-card); border-top: 1px solid var(--border); border-radius: 24px 24px 0 0; width: 100%; max-width: 480px; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
-        .modal-head { display: flex; justify-content: space-between; align-items: center; }
-        .modal-head h2 { font-size: 18px; }
-        .btn-close { background: var(--bg-input); border: none; color: var(--text-secondary); width: 34px; height: 34px; border-radius: 50%; font-size: 18px; cursor: pointer; }
-        .field label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; }
-        .field input, .field select { width: 100%; background: var(--bg-input); border: 1px solid var(--border); color: #fff; padding: 13px; border-radius: 12px; font-size: 16px; outline: none; }
-        .toast { position: fixed; top: 16px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--accent-blue); color: #fff; padding: 10px 18px; border-radius: 20px; font-size: 13px; font-weight: 600; opacity: 0; pointer-events: none; transition: 0.25s; z-index: 1000; white-space: nowrap; }
-        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Business Cash</title>
+  <style>
+    *{box-sizing:border-box;user-select:none;-webkit-tap-highlight-color:transparent;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+    body{margin:0;background:#0b0f17;color:#fff;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+    .hd{padding:14px 16px;display:flex;justify-content:space-between;align-items:center;background:#131a26;border-bottom:1px solid #1f293a}
+    .bname{font-size:16px;font-weight:800;color:#f8fafc}
+    .sbtn{background:#1e293b;border:1px solid #334155;color:#38bdf8;padding:6px 10px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer}
+    .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:10px 16px 0}
+    .tb{background:#131a26;border:1px solid #1f293a;color:#94a3b8;padding:7px 4px;border-radius:10px;font-size:11px;font-weight:700;cursor:pointer}
+    .tb.act{background:#0284c7;color:#fff;border-color:#0284c7}
+    .card{margin:12px 16px;background:linear-gradient(135deg,#131a26,#1e293b);border:1px solid #334155;border-radius:18px;padding:16px}
+    .plbl{font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px}
+    .pval{font-size:32px;font-weight:800;margin:4px 0 12px;color:#10b981}
+    .pval.neg{color:#ef4444}
+    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;border-top:1px solid #334155;padding-top:10px;font-size:11px}
+    .mval{font-size:13px;font-weight:700;margin-top:2px}
+    .acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 12px}
+    .btn{border:none;padding:13px;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;color:#fff}
+    .in{background:linear-gradient(135deg,#059669,#10b981)}
+    .out{background:linear-gradient(135deg,#dc2626,#ef4444)}
+    .hist{flex:1;overflow-y:auto;padding:0 16px 12px}
+    .item{background:#131a26;border:1px solid #1f293a;border-radius:12px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .del{background:0 0;border:none;color:#64748b;font-size:16px;cursor:pointer;padding:4px 8px}
+    .foot{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 16px 18px;background:#131a26;border-top:1px solid #1f293a}
+    .fbtn{background:#1e293b;border:1px solid #334155;color:#e2e8f0;padding:10px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer}
+    .mod{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
+    .mbox{background:#131a26;border:1px solid #334155;border-radius:18px;padding:18px;width:100%;max-width:360px}
+    .inp,select{width:100%;background:#0b0f17;border:1px solid #334155;color:#fff;padding:11px;border-radius:10px;font-size:14px;margin-bottom:10px;outline:none}
+    .tst{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#0284c7;color:#fff;padding:8px 16px;border-radius:99px;font-size:12px;font-weight:700;z-index:99;display:none;white-space:nowrap}
+  </style>
 </head>
 <body>
-    <div id="toast" class="toast"></div>
-    <div class="app-container">
-        <header class="header">
-            <div class="user-info">
-                <div class="avatar" id="user-avatar">Б</div>
-                <div class="user-meta">
-                    <h1 id="user-name">Владелец бизнеса</h1>
-                    <p>Студия детейлинга & Барбершоп</p>
-                </div>
-            </div>
-            <button type="button" class="badge-demo" id="currency-btn" style="cursor:pointer;" onclick="window.cycleCurrency()">Валюта: ₽</button>
-        </header>
-
-        <div class="periods" id="period-tabs">
-            <button type="button" class="period-btn" onclick="window.setPeriod('today', this)">Сегодня</button>
-            <button type="button" class="period-btn" onclick="window.setPeriod('week', this)">Неделя</button>
-            <button type="button" class="period-btn active" onclick="window.setPeriod('month', this)">Месяц</button>
-            <button type="button" class="period-btn" onclick="window.setPeriod('all', this)">Всё время</button>
-        </div>
-
-        <section class="main-card">
-            <div class="profit-label" id="profit-title">Чистая прибыль за месяц</div>
-            <div class="profit-value" id="net-profit">0 ₽</div>
-            <div class="metrics-grid">
-                <div class="metric-item"><span>Выручка</span><strong class="val-inc" id="total-income">0 ₽</strong></div>
-                <div class="metric-item"><span>Расходы</span><strong class="val-exp" id="total-expense">0 ₽</strong></div>
-                <div class="metric-item"><span>Рентабельность</span><strong class="val-margin" id="profit-margin">0%</strong></div>
-            </div>
-            <div class="ratio-bar">
-                <div class="ratio-inc" id="bar-income" style="width: 50%"></div>
-                <div class="ratio-exp" id="bar-expense" style="width: 50%"></div>
-            </div>
-        </section>
-
-        <div class="actions-row">
-            <button type="button" class="btn-action btn-income" onclick="window.openModal('income')">+ Приход</button>
-            <button type="button" class="btn-action btn-expense" onclick="window.openModal('expense')">– Расход</button>
-        </div>
-
-        <div class="section-title">
-            <span>История операций</span>
-            <span style="font-size: 12px; color: var(--text-secondary);" id="tx-count">0 записей</span>
-        </div>
-        <div class="tx-list" id="tx-list"></div>
-
-        <div class="footer-tools">
-            <button type="button" class="btn-tool" onclick="window.exportReport()">📋 Экспорт отчета</button>
-            <button type="button" class="btn-tool danger" id="btn-reset" onclick="window.handleResetClick()">🗑️ Сбросить демо</button>
-        </div>
+  <div class="tst" id="tst"></div>
+  <div class="hd">
+    <div class="bname" id="bn">Мой Бизнес</div>
+    <button class="sbtn" onclick="openSet()">⚙️ Настройки</button>
+  </div>
+  <div class="tabs">
+    <button class="tb act" id="p-day" onclick="setP('day')">Сегодня</button>
+    <button class="tb" id="p-week" onclick="setP('week')">Неделя</button>
+    <button class="tb" id="p-mon" onclick="setP('mon')">Месяц</button>
+    <button class="tb" id="p-all" onclick="setP('all')">Всё время</button>
+  </div>
+  <div class="card">
+    <div class="plbl">Чистая прибыль</div>
+    <div class="pval" id="prof">0 BYN</div>
+    <div class="grid3">
+      <div><div style="color:#94a3b8">Выручка</div><div class="mval" style="color:#10b981" id="inc">0</div></div>
+      <div><div style="color:#94a3b8">Расходы</div><div class="mval" style="color:#ef4444" id="exp">0</div></div>
+      <div><div style="color:#94a3b8">Маржа</div><div class="mval" style="color:#38bdf8" id="mrg">0%</div></div>
     </div>
-
-    <div class="modal-backdrop" id="modal-backdrop" onclick="if(event.target===this) window.closeModal()">
-        <div class="modal">
-            <div class="modal-head">
-                <h2 id="modal-title">Новая операция</h2>
-                <button type="button" class="btn-close" onclick="window.closeModal()">✕</button>
-            </div>
-            <div class="field">
-                <label>Сумма (₽)</label>
-                <input type="number" id="inp-amount" placeholder="Например: 3500" inputmode="numeric">
-            </div>
-            <div class="field">
-                <label>Категория</label>
-                <select id="inp-category"></select>
-            </div>
-            <div class="field">
-                <label>Комментарий (необязательно)</label>
-                <input type="text" id="inp-note" placeholder="Например: Полировка кузова">
-            </div>
-            <button type="button" class="btn-action btn-income" id="btn-save-tx" onclick="window.saveTransaction()">Сохранить операцию</button>
-        </div>
+  </div>
+  <div class="acts">
+    <button class="btn in" onclick="openTr('in')">+ Приход</button>
+    <button class="btn out" onclick="openTr('out')">– Расход</button>
+  </div>
+  <div class="hist" id="list"></div>
+  <div class="foot">
+    <button class="fbtn" onclick="rep()">📋 Отчет в чат</button>
+    <button class="fbtn" onclick="clr()">🧹 Сбросить демо</button>
+  </div>
+  <div class="mod" id="m-tr">
+    <div class="mbox">
+      <div style="font-size:16px;font-weight:800;margin-bottom:12px" id="m-tit">Новая операция</div>
+      <input class="inp" id="amt" type="number" placeholder="Сумма" />
+      <select id="cat"></select>
+      <input class="inp" id="nte" type="text" placeholder="Комментарий (необязательно)" />
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <button class="fbtn" onclick="closeM()">Отмена</button>
+        <button class="btn in" id="s-btn" onclick="addTr()">Сохранить</button>
+      </div>
     </div>
-<script>
-        (function() {
-            const tg = window.Telegram && window.Telegram.WebApp;
-            if (tg) {
-                try {
-                    tg.expand();
-                    tg.ready();
-                    if (tg.setHeaderColor) tg.setHeaderColor('#0b0f17');
-                    const user = tg.initDataUnsafe && tg.initDataUnsafe.user;
-                    if (user) {
-                        const fullName = [user.first_name, user.last_name].filter(Boolean).join(' ');
-                        document.getElementById('user-name').innerText = fullName || 'Владелец';
-                        const av = document.getElementById('user-avatar');
-                        if (user.photo_url) {
-                            av.innerHTML = `<img src="${user.photo_url}" alt="avatar">`;
-                        } else if (user.first_name) {
-                            av.innerText = user.first_name.charAt(0).toUpperCase();
-                        }
-                    }
-                } catch (err) {}
-            }
+  </div>
 
-            const STORAGE_KEY = 'finpulse_business_tx_v2';
-            const CATEGORIES = {
-                income: [
-                    { name: 'Услуга', icon: '✂️' },
-                    { name: 'Продажа товара', icon: '🧴' },
-                    { name: 'Предоплата', icon: '💳' },
-                    { name: 'Другое', icon: '💰' }
-                ],
-                expense: [
-                    { name: 'Закупка', icon: '📦' },
-                    { name: 'Аренда', icon: '🏢' },
-                    { name: 'Зарплата', icon: '👨‍🔧' },
-                    { name: 'Реклама', icon: '📣' },
-                    { name: 'Прочее', icon: '🧾' }
-                ]
-            };
+  <div class="mod" id="m-set">
+    <div class="mbox">
+      <div style="font-size:16px;font-weight:800;margin-bottom:12px">⚙️ Настройки под себя</div>
+      <div style="font-size:11px;color:#94a3b8;margin-bottom:4px">Название бизнеса</div>
+      <input class="inp" id="s-name" type="text" placeholder="Например: BarberPro" />
+      <div style="font-size:11px;color:#94a3b8;margin-bottom:4px">Валюта учета</div>
+      <select id="s-cur">
+        <option value="BYN">BYN (Белорусский рубль)</option>
+        <option value="RUB">RUB (Российский рубль ₽)</option>
+        <option value="USD">USD (Доллар $)</option>
+        <option value="EUR">EUR (Евро €)</option>
+        <option value="KZT">KZT (Тенге ₸)</option>
+      </select>
+      <div style="font-size:11px;color:#94a3b8;margin-bottom:4px">Категории прихода (через запятую)</div>
+      <input class="inp" id="s-cin" type="text" />
+      <div style="font-size:11px;color:#94a3b8;margin-bottom:4px">Категории расхода (через запятую)</div>
+      <input class="inp" id="s-cout" type="text" />
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <button class="fbtn" onclick="closeM()">Закрыть</button>
+        <button class="btn in" onclick="saveSet()">Применить</button>
+      </div>
+    </div>
+  </div>
 
-            let currentPeriod = 'month';
-            let modalType = 'income';
-            let transactions = [];
-            let resetArmed = false;
-            let resetTimer = null;
+  <script>
+    const now = Date.now();
+    let cfg = {
+      name: 'BarberPro Минск',
+      cur: 'BYN',
+      cin: 'Стрижка, Борода, Косметика, Сертификат',
+      cout: 'Аренда, Зарплата мастерам, Расходники, Реклама',
+      tx: new Array(
+        { id: 1, t: 'in', a: 180, c: 'Стрижка', n: 'Утренняя смена', d: now - 3600000 },
+        { id: 2, t: 'in', a: 95, c: 'Косметика', n: 'Глина для укладки', d: now - 7200000 },
+        { id: 3, t: 'out', a: 60, c: 'Расходники', n: 'Лезвия и полотенца', d: now - 10800000 },
+        { id: 4, t: 'in', a: 1250, c: 'Стрижка', n: 'Выручка за прошлую неделю', d: now - 259200000 },
+        { id: 5, t: 'out', a: 450, c: 'Аренда', n: 'Часть аренды помещения', d: now - 432000000 }
+      )
+    };
+    let per = 'day', curType = 'in';
 
-            function getDemoTransactions() {
-                const now = Date.now();
-                const hour = 3600 * 1000;
-                const day = 24 * hour;
-                return [
-                    { id: 101, type: 'income', category: 'Услуга', icon: '✂️', amount: 4500, note: 'Комплекс стрижка + борода', ts: now - 1 * hour },
-                    { id: 102, type: 'income', category: 'Услуга', icon: '🚘', amount: 18500, note: 'Керамика и детейлинг салона', ts: now - 3 * hour },
-                    { id: 103, type: 'expense', category: 'Закупка', icon: '📦', amount: 4200, note: 'Автохимия Koch Chemie', ts: now - 5 * hour },
-                    { id: 104, type: 'income', category: 'Продажа товара', icon: '🧴', amount: 2800, note: 'Косметика и уход', ts: now - 2 * day },
-                    { id: 105, type: 'expense', category: 'Реклама', icon: '📣', amount: 6500, note: 'Таргет на выходные', ts: now - 4 * day },
-                    { id: 106, type: 'expense', category: 'Аренда', icon: '🏢', amount: 35000, note: 'Аренда помещения', ts: now - 10 * day }
-                ];
-            }
+    function tst(m) { const t = document.getElementById('tst'); t.innerText = m; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2200); }
+    try { const sv = JSON.parse(localStorage.getItem('biz_cash_v1')); if (sv) cfg = { ...cfg, ...sv }; } catch (e) {}
+    function save() { try { localStorage.setItem('biz_cash_v1', JSON.stringify(cfg)); } catch (e) {} }
 
-            function loadData() {
-                const raw = localStorage.getItem(STORAGE_KEY);
-                if (raw === null) {
-                    transactions = getDemoTransactions();
-                    saveData();
-                } else {
-                    try { transactions = JSON.parse(raw) || []; } catch (e) { transactions = []; }
-                }
-            }
+    function setP(p) {
+      per = p;
+      document.querySelectorAll('.tb').forEach(b => b.classList.remove('act'));
+      document.getElementById('p-' + p).classList.add('act');
+      rn();
+    }
 
-            function saveData() {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
-            }
-            function showToast(text) {
-                const t = document.getElementById('toast');
-                t.innerText = text;
-                t.classList.add('show');
-                clearTimeout(window._toastTimer);
-                window._toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
-            }
+    function filt() {
+      const n = Date.now();
+      return cfg.tx.filter(x => {
+        if (per === 'day') return (n - x.d) < 86400000;
+        if (per === 'week') return (n - x.d) < 604800000;
+        if (per === 'mon') return (n - x.d) < 2592000000;
+        return true;
+      });
+    }
 
-            function formatMoney(num) {
-                return Math.round(num).toLocaleString('ru-RU') + ' ₽';
-            }
+    function rn() {
+      document.getElementById('bn').innerText = cfg.name;
+      const arr = filt();
+      let inc = 0, exp = 0;
+      arr.forEach(x => { if (x.t === 'in') inc += x.a; else exp += x.a; });
+      const pr = inc - exp;
+      const mg = inc > 0 ? Math.round((pr / inc) * 100) : 0;
+      const pel = document.getElementById('prof');
+      pel.innerText = (pr >= 0 ? '+' : '') + pr.toLocaleString() + ' ' + cfg.cur;
+      pel.className = 'pval' + (pr < 0 ? ' neg' : '');
+      document.getElementById('inc').innerText = inc.toLocaleString() + ' ' + cfg.cur;
+      document.getElementById('exp').innerText = exp.toLocaleString() + ' ' + cfg.cur;
+      document.getElementById('mrg').innerText = mg + '%';
 
-            function filterByPeriod(list) {
-                const now = new Date();
-                const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-                const weekAgo = now.getTime() - 7 * 24 * 3600 * 1000;
-                const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+      let h = '';
+      arr.slice().reverse().forEach(x => {
+        const dt = new Date(x.d).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const cl = x.t === 'in' ? '#10b981' : '#ef4444';
+        const sg = x.t === 'in' ? '+' : '–';
+        h += '<div class="item"><div><div style="font-size:13px;font-weight:700">' + x.c + ' <span style="color:#64748b;font-weight:400;font-size:11px">• ' + dt + '</span></div>';
+        if (x.n) h += '<div style="font-size:11px;color:#94a3b8;margin-top:2px">' + x.n + '</div>';
+        h += '</div><div style="display:flex;align-items:center;gap:6px"><div style="font-size:14px;font-weight:800;color:' + cl + '">' + sg + x.a.toLocaleString() + ' ' + cfg.cur + '</div>';
+        h += '<button class="del" onclick="delT(' + x.id + ')">✕</button></div></div>';
+      });
+      document.getElementById('list').innerHTML = h || '<div style="text-align:center;color:#64748b;margin-top:30px;font-size:13px">Нет операций за выбранный период</div>';
+    }
 
-                return list.filter(tx => {
-                    if (currentPeriod === 'today') return tx.ts >= startOfToday;
-                    if (currentPeriod === 'week') return tx.ts >= weekAgo;
-                    if (currentPeriod === 'month') return tx.ts >= startOfMonth;
-                    return true;
-                });
-            }
+    function openTr(t) {
+      curType = t;
+      document.getElementById('m-tit').innerText = t === 'in' ? '➕ Новый приход' : '➖ Новый расход';
+      const sb = document.getElementById('s-btn');
+      sb.className = 'btn ' + (t === 'in' ? 'in' : 'out');
+      const raw = t === 'in' ? cfg.cin : cfg.cout;
+      const cats = raw.split(',').map(s => s.trim()).filter(Boolean);
+      document.getElementById('cat').innerHTML = cats.map(c => '<option value="' + c + '">' + c + '</option>').join('');
+      document.getElementById('amt').value = '';
+      document.getElementById('nte').value = '';
+      document.getElementById('m-tr').style.display = 'flex';
+    }
 
-            function render() {
-                const filtered = filterByPeriod(transactions).sort((a, b) => b.ts - a.ts);
-                let inc = 0, exp = 0;
-                filtered.forEach(tx => tx.type === 'income' ? inc += tx.amount : exp += tx.amount);
+    function addTr() {
+      const a = parseFloat(document.getElementById('amt').value);
+      if (!a || a <= 0) { tst('❌ Введите сумму'); return; }
+      const c = document.getElementById('cat').value;
+      const n = document.getElementById('nte').value.trim();
+      cfg.tx.push({ id: Date.now(), t: curType, a: a, c: c, n: n, d: Date.now() });
+      save(); closeM(); rn(); tst('✅ Запись добавлена');
+    }
 
-                const profit = inc - exp;
-                const margin = inc > 0 ? Math.round((profit / inc) * 100) : 0;
+    function delT(id) { cfg.tx = cfg.tx.filter(x => x.id !== id); save(); rn(); }
 
-                const periodNames = { today: 'за сегодня', week: 'за неделю', month: 'за месяц', all: 'за всё время' };
-                document.getElementById('profit-title').innerText = `Чистая прибыль ${periodNames[currentPeriod]}`;
+    function openSet() {
+      document.getElementById('s-name').value = cfg.name;
+      document.getElementById('s-cur').value = cfg.cur;
+      document.getElementById('s-cin').value = cfg.cin;
+      document.getElementById('s-cout').value = cfg.cout;
+      document.getElementById('m-set').style.display = 'flex';
+    }
 
-                const profitEl = document.getElementById('net-profit');
-                profitEl.innerText = (profit > 0 ? '+' : '') + formatMoney(profit);
-                profitEl.classList.toggle('negative', profit < 0);
+    function saveSet() {
+      cfg.name = document.getElementById('s-name').value.trim() || 'Мой Бизнес';
+      cfg.cur = document.getElementById('s-cur').value;
+      cfg.cin = document.getElementById('s-cin').value.trim() || 'Услуга, Товар';
+      cfg.cout = document.getElementById('s-cout').value.trim() || 'Закупка, Аренда';
+      save(); closeM(); rn(); tst('✅ Настройки сохранены');
+    }
 
-                document.getElementById('total-income').innerText = formatMoney(inc);
-                document.getElementById('total-expense').innerText = formatMoney(exp);
-                document.getElementById('profit-margin').innerText = margin + '%';
+    function closeM() { document.getElementById('m-tr').style.display = 'none'; document.getElementById('m-set').style.display = 'none'; }
 
-                const totalFlow = inc + exp;
-                const incPct = totalFlow > 0 ? Math.round((inc / totalFlow) * 100) : 50;
-                document.getElementById('bar-income').style.width = incPct + '%';
-                document.getElementById('bar-expense').style.width = (100 - incPct) + '%';
+    function rep() {
+      const arr = filt();
+      let inc = 0, exp = 0;
+      arr.forEach(x => { if (x.t === 'in') inc += x.a; else exp += x.a; });
+      const pr = inc - exp;
+      const txt = '📊 Отчет: ' + cfg.name + ' (' + per.toUpperCase() + ')\n✅ Выручка: ' + inc.toLocaleString() + ' ' + cfg.cur + '\n🔻 Расходы: ' + exp.toLocaleString() + ' ' + cfg.cur + '\n💰 Чистая прибыль: ' + (pr >= 0 ? '+' : '') + pr.toLocaleString() + ' ' + cfg.cur;
+      if (navigator.clipboard) navigator.clipboard.writeText(txt);
+      tst('📋 Отчет скопирован в буфер!');
+    }
 
-                document.getElementById('tx-count').innerText = `${filtered.length} записей`;
-                const listEl = document.getElementById('tx-list');
+    function clr() { cfg.tx = new Array(); save(); rn(); tst('🧹 База очищена для клиента'); }
 
-                if (filtered.length === 0) {
-                    listEl.innerHTML = `<div style="text-align:center;color:var(--text-secondary);padding:28px 0;font-size:13px;">Операций за выбранный период пока нет</div>`;
-                    return;
-                }
-
-                listEl.innerHTML = filtered.map(tx => {
-                    const d = new Date(tx.ts);
-                    const dateStr = d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' }) + ' ' + d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-                    const sign = tx.type === 'income' ? '+' : '–';
-                    const cls = tx.type === 'income' ? 'val-inc' : 'val-exp';
-                    const noteText = tx.note ? ` • ${tx.note}` : '';
-                    return `
-                        <div class="tx-item">
-                            <div class="tx-left">
-                                <div class="tx-icon">${tx.icon}</div>
-                                <div class="tx-details">
-                                    <div class="tx-cat">${tx.category}</div>
-                                    <div class="tx-meta">${dateStr}${noteText}</div>
-                                </div>
-                            </div>
-                            <div class="tx-right">
-                                <span class="tx-amount ${cls}">${sign}${formatMoney(tx.amount)}</span>
-                                <button type="button" class="btn-del" onclick="window.deleteTx(${tx.id})">✕</button>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
-
-            window.setPeriod = function(period, btnEl) {
-                currentPeriod = period;
-                document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
-                if (btnEl) btnEl.classList.add('active');
-                render();
-            };
-
-            window.openModal = function(type) {
-                modalType = type;
-                document.getElementById('modal-title').innerText = type === 'income' ? 'Добавить приход' : 'Добавить расход';
-                const saveBtn = document.getElementById('btn-save-tx');
-                saveBtn.className = 'btn-action ' + (type === 'income' ? 'btn-income' : 'btn-expense');
-
-                const sel = document.getElementById('inp-category');
-                sel.innerHTML = CATEGORIES[type].map(c => `<option value="${c.name}">${c.icon} ${c.name}</option>`).join('');
-
-                document.getElementById('inp-amount').value = '';
-                document.getElementById('inp-note').value = '';
-                document.getElementById('modal-backdrop').classList.add('open');
-            };
-
-            window.closeModal = function() {
-                document.getElementById('modal-backdrop').classList.remove('open');
-            };
-
-            window.saveTransaction = function() {
-                const amount = parseFloat(document.getElementById('inp-amount').value);
-                if (!amount || amount <= 0) {
-                    showToast('Введите сумму больше 0');
-                    return;
-                }
-                const catName = document.getElementById('inp-category').value;
-                const catObj = CATEGORIES[modalType].find(c => c.name === catName) || { icon: '💵' };
-                const note = document.getElementById('inp-note').value.trim();
-
-                transactions.push({
-                    id: Date.now(),
-                    type: modalType,
-                    category: catName,
-                    icon: catObj.icon,
-                    amount: amount,
-                    note: note,
-                    ts: Date.now()
-                });
-
-                saveData();
-                window.closeModal();
-                render();
-                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                showToast(modalType === 'income' ? 'Приход добавлен' : 'Расход записан');
-            };
-
-            window.deleteTx = function(id) {
-                transactions = transactions.filter(t => t.id !== id);
-                saveData();
-                render();
-                showToast('Запись удалена');
-            };
-
-            window.exportReport = function() {
-                const filtered = filterByPeriod(transactions);
-                let inc = 0, exp = 0;
-                filtered.forEach(tx => tx.type === 'income' ? inc += tx.amount : exp += tx.amount);
-                const profit = inc - exp;
-                const margin = inc > 0 ? Math.round((profit / inc) * 100) : 0;
-                const periodNames = { today: 'Сегодня', week: 'Неделя', month: 'Месяц', all: 'Всё время' };
-
-                const report = [
-                    `📊 Финансовый отчет (${periodNames[currentPeriod]})`,
-                    `💰 Выручка: ${formatMoney(inc)}`,
-                    `📉 Расходы: ${formatMoney(exp)}`,
-                    `✅ Чистая прибыль: ${formatMoney(profit)}`,
-                    `📈 Рентабельность: ${margin}%`,
-                    `🧾 Операций: ${filtered.length}`
-                ].join('\n');
-
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(report).then(() => showToast('Отчет скопирован в буфер!'));
-                } else {
-                    const ta = document.createElement('textarea');
-                    ta.value = report;
-                    document.body.appendChild(ta);
-                    ta.select();
-                    document.execCommand('copy');
-                    ta.remove();
-                    showToast('Отчет скопирован!');
-                }
-            };
-
-            window.handleResetClick = function() {
-                const btn = document.getElementById('btn-reset');
-                if (!resetArmed) {
-                    resetArmed = true;
-                    btn.innerText = '⚠️ Нажми еще раз для очистки';
-                    resetTimer = setTimeout(() => {
-                        resetArmed = false;
-                        btn.innerText = '🗑️ Сбросить демо';
-                    }, 3000);
-                    return;
-                }
-                clearTimeout(resetTimer);
-                resetArmed = false;
-                btn.innerText = '🗑️ Сбросить демо';
-                transactions = [];
-                saveData();
-                render();
-                showToast('База очищена для клиента!');
-            };
-
-            loadData();
-            render();
-        })();
-    </script>
+    rn();
+  </script>
 </body>
 </html>

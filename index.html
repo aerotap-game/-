@@ -72,6 +72,8 @@
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="fbtn" onclick="closeM()">Отмена</button><button class="btn in" id="s-btn" onclick="addTr()">Сохранить</button></div>
   </div></div>
   <div class="mod" id="m-set"><div class="mbox">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="fbtn" onclick="closeM()">Закрыть</button><button class="btn in" onclick="saveSet()">Применить</button></div>
+    <button class="fbtn" style="width:100%;margin-top:8px;color:#ef4444" onclick="logout()">🔒 Заблокировать экран (PIN)</button>
     <div style="font-size:16px;font-weight:800;margin-bottom:10px">⚙️ Настройки бизнеса</div>
     <input class="inp" id="s-name" type="text" placeholder="Название точки" />
     <select id="s-cur"><option value="BYN">BYN (Бел. рубль)</option><option value="RUB">RUB (Рос. рубль)</option><option value="USD">USD (Доллар)</option><option value="EUR">EUR (Евро)</option></select>
@@ -163,6 +165,7 @@
     function closeM() { document.getElementById('m-tr').style.display = 'none'; document.getElementById('m-set').style.display = 'none'; }
     function rep() { let inc = 0, exp = 0; cfg.tx.forEach(x => { if (x.t === 'in') inc += x.a; else exp += x.a; }); const txt = '📊 ' + cfg.name + '\nВыручка: ' + inc + ' ' + cfg.cur + '\nРасходы: ' + exp + ' ' + cfg.cur + '\nПрибыль: ' + (inc - exp) + ' ' + cfg.cur; if (navigator.clipboard) navigator.clipboard.writeText(txt); tst('📋 Отчет скопирован!'); }
     function clr() { cfg.tx = new Array(); cfg.debts = new Array(); save(); rn(); tst('🧹 Демо очищено'); }
+    function logout() { cfg.unlocked = false; save(); closeM(); document.getElementById('lock').style.display = 'flex'; tst('🔒 Касса заблокирована'); }
     load();
   </script>
 </body>

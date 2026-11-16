@@ -4,33 +4,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Business Cash Pro</title>
+  <script src="https://telegram.org"></script>
   <style>
-    *{box-sizing:border-box;user-select:none;-webkit-tap-highlight-color:transparent;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+    *{box-sizing:border-box;user-select:none;-webkit-tap-highlight-color:transparent;font-family:-apple-system,sans-serif}
     body{margin:0;background:#0b0f17;color:#fff;display:flex;flex-direction:column;height:100vh;overflow:hidden}
     .lock{position:fixed;inset:0;background:#0b0f17;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
     .hd{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;background:#131a26;border-bottom:1px solid #1f293a}
-    .bname{font-size:15px;font-weight:800;color:#f8fafc}
-    .sbtn{background:#1e293b;border:1px solid #334155;color:#38bdf8;padding:6px 10px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer}
     .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:10px 16px 0}
     .tb{background:#131a26;border:1px solid #1f293a;color:#94a3b8;padding:7px 4px;border-radius:10px;font-size:11px;font-weight:700;cursor:pointer}
     .tb.act{background:#0284c7;color:#fff;border-color:#0284c7}
     .card{margin:10px 16px;background:linear-gradient(135deg,#131a26,#1e293b);border:1px solid #334155;border-radius:18px;padding:14px}
-    .pval{font-size:30px;font-weight:800;margin:2px 0 8px;color:#10b981}
-    .pval.neg{color:#ef4444}
+    .pval{font-size:30px;font-weight:800;margin:2px 0 8px;color:#10b981}.pval.neg{color:#ef4444}
     .pbar{width:100%;height:7px;background:#0b0f17;border-radius:99px;overflow:hidden;margin:6px 0 10px}
-    .pfill{height:100%;background:linear-gradient(90deg,#0284c7,#10b981);width:0%;transition:width .3s}
-    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;border-top:1px solid #334155;padding-top:8px;font-size:11px}
-    .mval{font-size:12px;font-weight:700;margin-top:2px}
+    .pfill{height:100%;background:linear-gradient(90deg,#0284c7,#10b981);width:0%}
     .acts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:0 16px 10px}
     .btn{border:none;padding:11px 6px;border-radius:12px;font-size:12px;font-weight:800;cursor:pointer;color:#fff}
-    .in{background:linear-gradient(135deg,#059669,#10b981)}
-    .out{background:linear-gradient(135deg,#dc2626,#ef4444)}
-    .dbt{background:linear-gradient(135deg,#d97706,#f59e0b);color:#000}
+    .in{background:#10b981}.out{background:#ef4444}.dbt{background:#f59e0b;color:#000}
     .hist{flex:1;overflow-y:auto;padding:0 16px 10px}
     .item{background:#131a26;border:1px solid #1f293a;border-radius:12px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-    .del{background:0 0;border:none;color:#64748b;font-size:15px;cursor:pointer;padding:4px 6px}
-    .okbtn{background:#10b981;border:none;color:#000;padding:5px 8px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;margin-right:4px}
-    .foot{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 16px 16px;background:#131a26;border-top:1px solid #1f293a}
     .fbtn{background:#1e293b;border:1px solid #334155;color:#e2e8f0;padding:10px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer}
     .mod{position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
     .mbox{background:#131a26;border:1px solid #334155;border-radius:18px;padding:18px;width:100%;max-width:360px}
@@ -40,19 +31,14 @@
 </head>
 <body>
   <div class="tst" id="tst"></div>
-
   <div class="lock" id="lock">
     <div style="font-size:44px;margin-bottom:10px">🔐</div>
     <div style="font-size:20px;font-weight:800;margin-bottom:6px">Активация кассы</div>
-    <div style="font-size:13px;color:#94a3b8;margin-bottom:16px">Введите персональный PIN-код доступа</div>
-    <input class="inp" id="pin" type="number" placeholder="••••" style="max-width:200px;text-align:center;font-size:22px;letter-spacing:6px" />
+    <div style="font-size:13px;color:#94a3b8;margin-bottom:16px">Введите PIN-код (7744 — клиент, 0000 — демо)</div>
+    <input class="inp" id="pin" type="tel" maxlength="4" placeholder="••••" style="max-width:200px;text-align:center;font-size:22px;letter-spacing:6px" />
     <button class="btn in" style="width:200px;padding:13px;font-size:14px" onclick="unlock()">Войти в систему</button>
   </div>
-
-  <div class="hd">
-    <div class="bname" id="bn">Мой Бизнес</div>
-    <button class="sbtn" onclick="openSet()">⚙️ Настройки</button>
-  </div>
+  <div class="hd"><div style="font-size:15px;font-weight:800" id="bn">Мой Бизнес</div><button class="fbtn" style="padding:6px 10px;color:#38bdf8" onclick="openSet()">⚙️ Настройки</button></div>
   <div class="tabs">
     <button class="tb act" id="p-day" onclick="setP('day')">Сегодня</button>
     <button class="tb" id="p-week" onclick="setP('week')">Неделя</button>
@@ -60,16 +46,13 @@
     <button class="tb" id="p-debt" onclick="setP('debt')">Долги (<span id="dcnt">0</span>)</button>
   </div>
   <div class="card">
-    <div style="display:flex;justify-content:space-between;font-size:11px;color:#94a3b8">
-      <span>ЧИСТАЯ ПРИБЫЛЬ</span>
-      <span id="glbl">Цель: 0%</span>
-    </div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:#94a3b8"><span>ЧИСТАЯ ПРИБЫЛЬ</span><span id="glbl">Цель: 0%</span></div>
     <div class="pval" id="prof">0 BYN</div>
     <div class="pbar"><div class="pfill" id="gfill"></div></div>
-    <div class="grid3">
-      <div><div style="color:#94a3b8">Выручка</div><div class="mval" style="color:#10b981" id="inc">0</div></div>
-      <div><div style="color:#94a3b8">Расходы</div><div class="mval" style="color:#ef4444" id="exp">0</div></div>
-      <div><div style="color:#94a3b8">Маржа</div><div class="mval" style="color:#38bdf8" id="mrg">0%</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;border-top:1px solid #334155;padding-top:8px;font-size:11px">
+      <div><div style="color:#94a3b8">Выручка</div><div style="font-size:12px;font-weight:700;color:#10b981" id="inc">0</div></div>
+      <div><div style="color:#94a3b8">Расходы</div><div style="font-size:12px;font-weight:700;color:#ef4444" id="exp">0</div></div>
+      <div><div style="color:#94a3b8">Маржа</div><div style="font-size:12px;font-weight:700;color:#38bdf8" id="mrg">0%</div></div>
     </div>
   </div>
   <div class="acts">
@@ -78,212 +61,109 @@
     <button class="btn dbt" onclick="openTr('debt')">⏳ В долг</button>
   </div>
   <div class="hist" id="list"></div>
-  <div class="foot">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 16px 16px;background:#131a26;border-top:1px solid #1f293a">
     <button class="fbtn" onclick="rep()">📋 Отчет в чат</button>
-    <button class="fbtn" onclick="clr()">🧹 Очистить базу</button>
+    <button class="fbtn" onclick="clr()">🧹 Сбросить демо</button>
   </div>
-  <div class="mod" id="m-tr">
-    <div class="mbox">
-      <div style="font-size:16px;font-weight:800;margin-bottom:12px" id="m-tit">Новая операция</div>
-      <input class="inp" id="amt" type="number" placeholder="Сумма" />
-      <select id="cat"></select>
-      <input class="inp" id="nte" type="text" placeholder="Имя клиента или комментарий" />
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <button class="fbtn" onclick="closeM()">Отмена</button>
-        <button class="btn in" id="s-btn" onclick="addTr()">Сохранить</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="mod" id="m-set">
-    <div class="mbox">
-      <div style="font-size:16px;font-weight:800;margin-bottom:10px">⚙️ Настройки бизнеса</div>
-      <input class="inp" id="s-name" type="text" placeholder="Название точки" />
-      <select id="s-cur">
-        <option value="BYN">BYN (Белорусский рубль)</option>
-        <option value="RUB">RUB (Российский рубль ₽)</option>
-        <option value="USD">USD (Доллар $)</option>
-        <option value="EUR">EUR (Евро €)</option>
-        <option value="KZT">KZT (Тенге ₸)</option>
-      </select>
-      <input class="inp" id="s-goal" type="number" placeholder="Цель по прибыли на месяц" />
-      <input class="inp" id="s-cin" type="text" placeholder="Категории прихода через запятую" />
-      <input class="inp" id="s-cout" type="text" placeholder="Категории расхода через запятую" />
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <button class="fbtn" onclick="closeM()">Закрыть</button>
-        <button class="btn in" onclick="saveSet()">Применить</button>
-      </div>
-    </div>
-  </div>
-
+  <div class="mod" id="m-tr"><div class="mbox">
+    <div style="font-size:16px;font-weight:800;margin-bottom:12px" id="m-tit">Операция</div>
+    <input class="inp" id="amt" type="number" placeholder="Сумма" /><select id="cat"></select>
+    <input class="inp" id="nte" type="text" placeholder="Клиент или комментарий" />
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="fbtn" onclick="closeM()">Отмена</button><button class="btn in" id="s-btn" onclick="addTr()">Сохранить</button></div>
+  </div></div>
+  <div class="mod" id="m-set"><div class="mbox">
+    <div style="font-size:16px;font-weight:800;margin-bottom:10px">⚙️ Настройки бизнеса</div>
+    <input class="inp" id="s-name" type="text" placeholder="Название точки" />
+    <select id="s-cur"><option value="BYN">BYN (Бел. рубль)</option><option value="RUB">RUB (Рос. рубль)</option><option value="USD">USD (Доллар)</option><option value="EUR">EUR (Евро)</option></select>
+    <input class="inp" id="s-goal" type="number" placeholder="Цель прибыли на месяц" />
+    <input class="inp" id="s-cin" type="text" placeholder="Категории прихода через запятую" />
+    <input class="inp" id="s-cout" type="text" placeholder="Категории расхода через запятую" />
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="fbtn" onclick="closeM()">Закрыть</button><button class="btn in" onclick="saveSet()">Применить</button></div>
+  </div></div>
   <script>
-    const now = Date.now();
-    let cfg = {
-      unlocked: false,
-      name: 'Мой Бизнес',
-      cur: 'BYN',
-      goal: 5000,
-      cin: 'Услуга, Продажа товара, Предоплата',
-      cout: 'Аренда, Зарплата, Закупка, Реклама',
-      tx: new Array(),
-      debts: new Array()
-    };
+    const tg = window.Telegram?.WebApp;
+    if (tg) { tg.ready(); tg.expand(); }
+    let cfg = { unlocked: false, name: 'Мой Бизнес', cur: 'BYN', goal: 5000, cin: 'Услуга, Товар, Предоплата', cout: 'Аренда, Зарплата, Закупка', tx: new Array(), debts: new Array() };
     let per = 'day', curType = 'in';
 
     function tst(m) { const t = document.getElementById('tst'); t.innerText = m; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2200); }
-    try { const sv = JSON.parse(localStorage.getItem('biz_pro_v2')); if (sv) cfg = { ...cfg, ...sv }; } catch (e) {}
-    function save() { try { localStorage.setItem('biz_pro_v2', JSON.stringify(cfg)); } catch (e) {} }
+
+    function save() {
+      const str = JSON.stringify(cfg);
+      try { localStorage.setItem('biz_cloud_v3', str); } catch (e) {}
+      try { if (tg && tg.CloudStorage) tg.CloudStorage.setItem('biz_data', str); } catch (e) {}
+    }
+
+    function load() {
+      try { const sv = JSON.parse(localStorage.getItem('biz_cloud_v3')); if (sv) cfg = { ...cfg, ...sv }; } catch (e) {}
+      if (cfg.unlocked) document.getElementById('lock').style.display = 'none';
+      rn();
+      try {
+        if (tg && tg.CloudStorage) {
+          tg.CloudStorage.getItem('biz_data', (err, val) => {
+            if (!err && val) {
+              cfg = { ...cfg, ...JSON.parse(val) };
+              if (cfg.unlocked) document.getElementById('lock').style.display = 'none';
+              rn();
+            }
+          });
+        }
+      } catch (e) {}
+    }
 
     function unlock() {
       const p = document.getElementById('pin').value.trim();
-      if (p === '7744') {
-        cfg.unlocked = true; save();
-        document.getElementById('lock').style.display = 'none';
-        tst('✅ Лицензия активирована!'); rn();
-      } else if (p === '0000') {
-        cfg.unlocked = true; cfg.name = 'BarberPro Минск (Демо)';
-        cfg.tx = new Array(
-          { id: 1, t: 'in', a: 240, c: 'Услуга', n: 'Утренняя смена', d: now - 3600000 },
-          { id: 2, t: 'in', a: 110, c: 'Продажа товара', n: 'Косметика', d: now - 7200000 },
-          { id: 3, t: 'out', a: 70, c: 'Закупка', n: 'Расходники', d: now - 10800000 }
-        );
-        cfg.debts = new Array({ id: 10, a: 85, n: 'Алексей (предоплата/остаток)', d: now - 5000000 });
-        save(); document.getElementById('lock').style.display = 'none';
-        tst('🔥 Демо-режим загружен!'); rn();
-      } else {
-        tst('❌ Неверный PIN-код');
-      }
+      if (p === '7744') { cfg.unlocked = true; save(); document.getElementById('lock').style.display = 'none'; tst('✅ Касса активирована!'); rn(); }
+      else if (p === '0000') {
+        cfg.unlocked = true; cfg.name = 'BarberPro Минск';
+        cfg.tx = new Array({ id: 1, t: 'in', a: 240, c: 'Услуга', n: 'Смена', d: Date.now() - 3600000 }, { id: 2, t: 'out', a: 60, c: 'Закупка', n: 'Расходники', d: Date.now() - 7200000 });
+        cfg.debts = new Array({ id: 10, a: 85, n: 'Алексей (остаток)', d: Date.now() });
+        save(); document.getElementById('lock').style.display = 'none'; tst('🔥 Демо загружено!'); rn();
+      } else tst('❌ Неверный PIN');
     }
 
-    if (cfg.unlocked) document.getElementById('lock').style.display = 'none';
-
-    function setP(p) {
-      per = p;
-      document.querySelectorAll('.tb').forEach(b => b.classList.remove('act'));
-      document.getElementById('p-' + p).classList.add('act');
-      rn();
-    }
+    function setP(p) { per = p; document.querySelectorAll('.tb').forEach(b => b.classList.remove('act')); document.getElementById('p-' + p).classList.add('act'); rn(); }
 
     function rn() {
-      document.getElementById('bn').innerText = cfg.name;
-      document.getElementById('dcnt').innerText = cfg.debts.length;
-      const n = Date.now();
-      const arr = cfg.tx.filter(x => {
-        if (per === 'day') return (n - x.d) < 86400000;
-        if (per === 'week') return (n - x.d) < 604800000;
-        return (n - x.d) < 2592000000;
-      });
-      let inc = 0, exp = 0;
-      arr.forEach(x => { if (x.t === 'in') inc += x.a; else exp += x.a; });
-      const pr = inc - exp;
-      const mg = inc > 0 ? Math.round((pr / inc) * 100) : 0;
-      const pct = cfg.goal > 0 ? Math.min(100, Math.max(0, Math.round((pr / cfg.goal) * 100))) : 0;
-
-      const pel = document.getElementById('prof');
-      pel.innerText = (pr >= 0 ? '+' : '') + pr.toLocaleString() + ' ' + cfg.cur;
-      pel.className = 'pval' + (pr < 0 ? ' neg' : '');
-      document.getElementById('glbl').innerText = 'Цель (' + cfg.goal + '): ' + pct + '%';
-      document.getElementById('gfill').style.width = pct + '%';
-      document.getElementById('inc').innerText = inc.toLocaleString() + ' ' + cfg.cur;
-      document.getElementById('exp').innerText = exp.toLocaleString() + ' ' + cfg.cur;
-      document.getElementById('mrg').innerText = mg + '%';
-
+      document.getElementById('bn').innerText = cfg.name; document.getElementById('dcnt').innerText = cfg.debts.length;
+      const n = Date.now(), arr = cfg.tx.filter(x => per === 'day' ? (n - x.d) < 86400000 : per === 'week' ? (n - x.d) < 604800000 : (n - x.d) < 2592000000);
+      let inc = 0, exp = 0; arr.forEach(x => { if (x.t === 'in') inc += x.a; else exp += x.a; });
+      const pr = inc - exp, mg = inc > 0 ? Math.round((pr / inc) * 100) : 0, pct = cfg.goal > 0 ? Math.min(100, Math.max(0, Math.round((pr / cfg.goal) * 100))) : 0;
+      const pel = document.getElementById('prof'); pel.innerText = (pr >= 0 ? '+' : '') + pr.toLocaleString() + ' ' + cfg.cur; pel.className = 'pval' + (pr < 0 ? ' neg' : '');
+      document.getElementById('glbl').innerText = 'Цель (' + cfg.goal + '): ' + pct + '%'; document.getElementById('gfill').style.width = pct + '%';
+      document.getElementById('inc').innerText = inc.toLocaleString() + ' ' + cfg.cur; document.getElementById('exp').innerText = exp.toLocaleString() + ' ' + cfg.cur; document.getElementById('mrg').innerText = mg + '%';
       let h = '';
       if (per === 'debt') {
-        cfg.debts.slice().reverse().forEach(x => {
-          h += '<div class="item"><div><div style="font-size:13px;font-weight:700;color:#f59e0b">⏳ ' + (x.n || 'Клиент') + '</div></div>';
-          h += '<div style="display:flex;align-items:center"><div style="font-size:13px;font-weight:800;margin-right:8px">' + x.a.toLocaleString() + ' ' + cfg.cur + '</div>';
-          h += '<button class="okbtn" onclick="payDebt(' + x.id + ')">Закрыть</button><button class="del" onclick="delD(' + x.id + ')">✕</button></div></div>';
-        });
-        document.getElementById('list').innerHTML = h || '<div style="text-align:center;color:#64748b;margin-top:30px;font-size:13px">Активных долгов нет</div>';
+        cfg.debts.slice().reverse().forEach(x => { h += '<div class="item"><div style="font-size:13px;font-weight:700;color:#f59e0b">⏳ ' + x.n + '</div><div><b style="margin-right:8px">' + x.a + ' ' + cfg.cur + '</b><button style="background:#10b981;border:none;border-radius:6px;padding:4px 8px;font-weight:700" onclick="payD(' + x.id + ')">OK</button></div></div>'; });
       } else {
-        arr.slice().reverse().forEach(x => {
-          const dt = new Date(x.d).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-          const cl = x.t === 'in' ? '#10b981' : '#ef4444';
-          const sg = x.t === 'in' ? '+' : '–';
-          h += '<div class="item"><div><div style="font-size:13px;font-weight:700">' + x.c + ' <span style="color:#64748b;font-weight:400;font-size:11px">• ' + dt + '</span></div>';
-          if (x.n) h += '<div style="font-size:11px;color:#94a3b8;margin-top:2px">' + x.n + '</div>';
-          h += '</div><div style="display:flex;align-items:center;gap:4px"><div style="font-size:13px;font-weight:800;color:' + cl + '">' + sg + x.a.toLocaleString() + ' ' + cfg.cur + '</div>';
-          h += '<button class="del" onclick="delT(' + x.id + ')">✕</button></div></div>';
-        });
-        document.getElementById('list').innerHTML = h || '<div style="text-align:center;color:#64748b;margin-top:30px;font-size:13px">Нет операций за период</div>';
+        arr.slice().reverse().forEach(x => { const cl = x.t === 'in' ? '#10b981' : '#ef4444'; h += '<div class="item"><div><div style="font-size:13px;font-weight:700">' + x.c + '</div><div style="font-size:11px;color:#94a3b8">' + (x.n || '') + '</div></div><div style="font-weight:800;color:' + cl + '">' + (x.t === 'in' ? '+' : '–') + x.a + ' ' + cfg.cur + ' <span style="color:#64748b;margin-left:6px" onclick="delT(' + x.id + ')">✕</span></div></div>'; });
       }
+      document.getElementById('list').innerHTML = h || '<div style="text-align:center;color:#64748b;margin-top:30px;font-size:13px">Записей пока нет</div>';
     }
 
     function openTr(t) {
-      curType = t;
-      const catEl = document.getElementById('cat');
-      const sb = document.getElementById('s-btn');
-      if (t === 'debt') {
-        document.getElementById('m-tit').innerText = '⏳ Записать долг / остаток';
-        catEl.style.display = 'none';
-        sb.className = 'btn dbt';
-      } else {
-        document.getElementById('m-tit').innerText = t === 'in' ? '➕ Новый приход' : '➖ Новый расход';
-        catEl.style.display = 'block';
-        sb.className = 'btn ' + (t === 'in' ? 'in' : 'out');
-        const raw = t === 'in' ? cfg.cin : cfg.cout;
-        const cats = raw.split(',').map(s => s.trim()).filter(Boolean);
-        catEl.innerHTML = cats.map(c => '<option value="' + c + '">' + c + '</option>').join('');
-      }
-      document.getElementById('amt').value = '';
-      document.getElementById('nte').value = '';
-      document.getElementById('m-tr').style.display = 'flex';
+      curType = t; const ce = document.getElementById('cat'), sb = document.getElementById('s-btn');
+      if (t === 'debt') { document.getElementById('m-tit').innerText = '⏳ Записать долг'; ce.style.display = 'none'; sb.className = 'btn dbt'; }
+      else { document.getElementById('m-tit').innerText = t === 'in' ? '➕ Приход' : '➖ Расход'; ce.style.display = 'block'; sb.className = 'btn ' + (t === 'in' ? 'in' : 'out'); ce.innerHTML = (t === 'in' ? cfg.cin : cfg.cout).split(',').map(s => '<option value="' + s.trim() + '">' + s.trim() + '</option>').join(''); }
+      document.getElementById('amt').value = ''; document.getElementById('nte').value = ''; document.getElementById('m-tr').style.display = 'flex';
     }
 
     function addTr() {
-      const a = parseFloat(document.getElementById('amt').value);
-      if (!a || a <= 0) { tst('❌ Введите сумму'); return; }
+      const a = parseFloat(document.getElementById('amt').value); if (!a || a <= 0) return tst('❌ Введите сумму');
       const n = document.getElementById('nte').value.trim();
-      if (curType === 'debt') {
-        cfg.debts.push({ id: Date.now(), a: a, n: n || 'Без имени', d: Date.now() });
-        tst('⏳ Записано в долги');
-      } else {
-        const c = document.getElementById('cat').value;
-        cfg.tx.push({ id: Date.now(), t: curType, a: a, c: c, n: n, d: Date.now() });
-        tst('✅ Запись добавлена');
-      }
-      save(); closeM(); rn();
+      if (curType === 'debt') cfg.debts.push({ id: Date.now(), a, n: n || 'Клиент', d: Date.now() });
+      else cfg.tx.push({ id: Date.now(), t: curType, a, c: document.getElementById('cat').value, n, d: Date.now() });
+      save(); closeM(); rn(); tst('✅ Сохранено в облако');
     }
 
-    function payDebt(id) {
-      const item = cfg.debts.find(x => x.id === id);
-      if (!item) return;
-      cfg.tx.push({ id: Date.now(), t: 'in', a: item.a, c: 'Погашение долга', n: item.n, d: Date.now() });
-      cfg.debts = cfg.debts.filter(x => x.id !== id);
-      save(); rn(); tst('💰 Долг закрыт и добавлен в кассу!');
-    }
-
+    function payD(id) { const x = cfg.debts.find(i => i.id === id); if (x) { cfg.tx.push({ id: Date.now(), t: 'in', a: x.a, c: 'Погашение долга', n: x.n, d: Date.now() }); cfg.debts = cfg.debts.filter(i => i.id !== id); save(); rn(); tst('💰 Оплачено!'); } }
     function delT(id) { cfg.tx = cfg.tx.filter(x => x.id !== id); save(); rn(); }
-    function delD(id) { cfg.debts = cfg.debts.filter(x => x.id !== id); save(); rn(); }
-
-    function openSet() {
-      document.getElementById('s-name').value = cfg.name;
-      document.getElementById('s-cur').value = cfg.cur;
-      document.getElementById('s-goal').value = cfg.goal;
-      document.getElementById('s-cin').value = cfg.cin;
-      document.getElementById('s-cout').value = cfg.cout;
-      document.getElementById('m-set').style.display = 'flex';
-    }
-
-    function saveSet() {
-      cfg.name = document.getElementById('s-name').value.trim() || 'Мой Бизнес';
-      cfg.cur = document.getElementById('s-cur').value;
-      cfg.goal = parseFloat(document.getElementById('s-goal').value) || 5000;
-      cfg.cin = document.getElementById('s-cin').value.trim() || 'Услуга, Товар';
-      cfg.cout = document.getElementById('s-cout').value.trim() || 'Закупка, Аренда';
-      save(); closeM(); rn(); tst('✅ Настройки применены');
-    }
-
+    function openSet() { document.getElementById('s-name').value = cfg.name; document.getElementById('s-cur').value = cfg.cur; document.getElementById('s-goal').value = cfg.goal; document.getElementById('s-cin').value = cfg.cin; document.getElementById('s-cout').value = cfg.cout; document.getElementById('m-set').style.display = 'flex'; }
+    function saveSet() { cfg.name = document.getElementById('s-name').value.trim() || 'Мой Бизнес'; cfg.cur = document.getElementById('s-cur').value; cfg.goal = parseFloat(document.getElementById('s-goal').value) || 5000; cfg.cin = document.getElementById('s-cin').value; cfg.cout = document.getElementById('s-cout').value; save(); closeM(); rn(); tst('✅ Настройки обновлены'); }
     function closeM() { document.getElementById('m-tr').style.display = 'none'; document.getElementById('m-set').style.display = 'none'; }
-
-    function rep() {
-      let inc = 0, exp = 0;
-      cfg.tx.forEach(x => { if (x.t === 'in') inc += x.a; else exp += x.a; });
-      const pr = inc - exp;
-      const txt = '📊 Сводка: ' + cfg.name + '\n✅ Выручка: ' + inc.toLocaleString() + ' ' + cfg.cur + '\n🔻 Расходы: ' + exp.toLocaleString() + ' ' + cfg.cur + '\n💰 Прибыль: ' + (pr >= 0 ? '+' : '') + pr.toLocaleString() + ' ' + cfg.cur;
-if (navigator.clipboard) navigator.clipboard.writeText(txt);
-tst('📋 Отчет скопирован!');
-}
-function clr() { cfg.tx = new Array(); cfg.debts = new Array(); save(); rn(); tst('🧹 База очищена'); }
-rn();
+    function rep() { let inc = 0, exp = 0; cfg.tx.forEach(x => { if (x.t === 'in') inc += x.a; else exp += x.a; }); const txt = '📊 ' + cfg.name + '\nВыручка: ' + inc + ' ' + cfg.cur + '\nРасходы: ' + exp + ' ' + cfg.cur + '\nПрибыль: ' + (inc - exp) + ' ' + cfg.cur; if (navigator.clipboard) navigator.clipboard.writeText(txt); tst('📋 Отчет скопирован!'); }
+    function clr() { cfg.tx = new Array(); cfg.debts = new Array(); save(); rn(); tst('🧹 Демо очищено'); }
+    load();
+  </script>
+</body>
+</html>

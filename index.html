@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Business Cash Pro</title>
+  <title>Математика Бизнеса</title>
   <script src="https://telegram.org"></script>
   <style>
-    *{box-sizing:border-box;user-select:none;-webkit-tap-highlight-color:transparent;font-family:-apple-system,sans-serif}
+    *{box-sizing:border-box;user-select:none;-webkit-tap-highlight-color:transparent;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
     body{margin:0;background:#0b0f17;color:#fff;display:flex;flex-direction:column;height:100vh;overflow:hidden}
     .lock{position:fixed;inset:0;background:#0b0f17;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
     .hd{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;background:#131a26;border-bottom:1px solid #1f293a}
@@ -16,7 +16,7 @@
     .card{margin:10px 16px;background:linear-gradient(135deg,#131a26,#1e293b);border:1px solid #334155;border-radius:18px;padding:14px}
     .pval{font-size:30px;font-weight:800;margin:2px 0 8px;color:#10b981}.pval.neg{color:#ef4444}
     .pbar{width:100%;height:7px;background:#0b0f17;border-radius:99px;overflow:hidden;margin:6px 0 10px}
-    .pfill{height:100%;background:linear-gradient(90deg,#0284c7,#10b981);width:0%}
+    .pfill{height:100%;background:linear-gradient(90deg,#0284c7,#10b981);width:0%;transition:width .3s}
     .acts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:0 16px 10px}
     .btn{border:none;padding:11px 6px;border-radius:12px;font-size:12px;font-weight:800;cursor:pointer;color:#fff}
     .in{background:#10b981}.out{background:#ef4444}.dbt{background:#f59e0b;color:#000}
@@ -33,11 +33,12 @@
   <div class="tst" id="tst"></div>
   <div class="lock" id="lock">
     <div style="font-size:44px;margin-bottom:10px">🔐</div>
-    <div style="font-size:20px;font-weight:800;margin-bottom:6px">Активация кассы</div>
+    <div style="font-size:20px;font-weight:800;margin-bottom:6px">Математика Бизнеса</div>
     <div style="font-size:13px;color:#94a3b8;margin-bottom:16px">Введите персональный ключ доступа, полученный после активации</div>
     <input class="inp" id="pin" type="tel" maxlength="4" placeholder="••••" style="max-width:200px;text-align:center;font-size:22px;letter-spacing:6px" />
     <button class="btn in" style="width:200px;padding:13px;font-size:14px" onclick="unlock()">Войти в систему</button>
   </div>
+
   <div class="hd"><div style="font-size:15px;font-weight:800" id="bn">Мой Бизнес</div><button class="fbtn" style="padding:6px 10px;color:#38bdf8" onclick="openSet()">⚙️ Настройки</button></div>
   <div class="tabs">
     <button class="tb act" id="p-day" onclick="setP('day')">Сегодня</button>
@@ -63,65 +64,92 @@
   <div class="hist" id="list"></div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 16px 16px;background:#131a26;border-top:1px solid #1f293a">
     <button class="fbtn" onclick="rep()">📋 Отчет в чат</button>
-    <button class="fbtn" onclick="clr()">🧹 Сбросить демо</button>
+    <button class="fbtn" onclick="clr()">🧹 Очистить записи</button>
   </div>
-  <div class="mod" id="m-tr"><div class="mbox">
+<div class="mod" id="m-tr"><div class="mbox">
     <div style="font-size:16px;font-weight:800;margin-bottom:12px" id="m-tit">Операция</div>
     <input class="inp" id="amt" type="number" placeholder="Сумма" /><select id="cat"></select>
     <input class="inp" id="nte" type="text" placeholder="Клиент или комментарий" />
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="fbtn" onclick="closeM()">Отмена</button><button class="btn in" id="s-btn" onclick="addTr()">Сохранить</button></div>
   </div></div>
+
   <div class="mod" id="m-set"><div class="mbox">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="fbtn" onclick="closeM()">Закрыть</button><button class="btn in" onclick="saveSet()">Применить</button></div>
-    <button class="fbtn" style="width:100%;margin-top:8px;color:#ef4444" onclick="logout()">🔒 Заблокировать экран (PIN)</button>
     <div style="font-size:16px;font-weight:800;margin-bottom:10px">⚙️ Настройки бизнеса</div>
     <input class="inp" id="s-name" type="text" placeholder="Название точки" />
-    <select id="s-cur"><option value="BYN">BYN (Бел. рубль)</option><option value="RUB">RUB (Рос. рубль)</option><option value="USD">USD (Доллар)</option><option value="EUR">EUR (Евро)</option></select>
+    <select id="s-cur"><option value="BYN">BYN (Бел. рубль)</option><option value="RUB">RUB (Рос. рубль)</option><option value="USD">USD (Доллар)</option><option value="EUR">EUR (Евро)</option><option value="KZT">KZT (Тенге)</option></select>
     <input class="inp" id="s-goal" type="number" placeholder="Цель прибыли на месяц" />
     <input class="inp" id="s-cin" type="text" placeholder="Категории прихода через запятую" />
     <input class="inp" id="s-cout" type="text" placeholder="Категории расхода через запятую" />
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="fbtn" onclick="closeM()">Закрыть</button><button class="btn in" onclick="saveSet()">Применить</button></div>
+    <button class="fbtn" style="width:100%;margin-top:8px;color:#ef4444" onclick="logout()">🔒 Заблокировать экран (PIN)</button>
   </div></div>
+
   <script>
     const tg = window.Telegram?.WebApp;
     if (tg) { tg.ready(); tg.expand(); }
-    let cfg = { unlocked: false, name: 'Мой Бизнес', cur: 'BYN', goal: 5000, cin: 'Услуга, Товар, Предоплата', cout: 'Аренда, Зарплата, Закупка', tx: new Array(), debts: new Array() };
+    let mode = '';
+    let cfg = { name: 'Мой Бизнес', cur: 'BYN', goal: 5000, cin: 'Услуга, Товар, Предоплата', cout: 'Аренда, Зарплата, Закупка', tx: new Array(), debts: new Array() };
     let per = 'day', curType = 'in';
 
     function tst(m) { const t = document.getElementById('tst'); t.innerText = m; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2200); }
 
     function save() {
+      if (mode !== 'pro') return;
       const str = JSON.stringify(cfg);
-      try { localStorage.setItem('biz_cloud_v3', str); } catch (e) {}
-      try { if (tg && tg.CloudStorage) tg.CloudStorage.setItem('biz_data', str); } catch (e) {}
+      try { localStorage.setItem('biz_pro_real', str); } catch (e) {}
+      try { if (tg && tg.CloudStorage) tg.CloudStorage.setItem('biz_pro_real', str); } catch (e) {}
     }
 
-    function load() {
-      try { const sv = JSON.parse(localStorage.getItem('biz_cloud_v3')); if (sv) cfg = { ...cfg, ...sv }; } catch (e) {}
-      if (cfg.unlocked) document.getElementById('lock').style.display = 'none';
+    function initProData() {
+      try { const sv = JSON.parse(localStorage.getItem('biz_pro_real')); if (sv) cfg = { ...cfg, ...sv }; } catch (e) {}
       rn();
       try {
         if (tg && tg.CloudStorage) {
-          tg.CloudStorage.getItem('biz_data', (err, val) => {
-            if (!err && val) {
-              cfg = { ...cfg, ...JSON.parse(val) };
-              if (cfg.unlocked) document.getElementById('lock').style.display = 'none';
-              rn();
-            }
+          tg.CloudStorage.getItem('biz_pro_real', (err, val) => {
+            if (!err && val) { cfg = { ...cfg, ...JSON.parse(val) }; rn(); }
           });
         }
       } catch (e) {}
     }
 
+    function initDemoData() {
+      const n = Date.now();
+      cfg = {
+        name: 'BarberPro Минск (Демо)', cur: 'BYN', goal: 5000,
+        cin: 'Стрижка, Борода, Косметика', cout: 'Аренда, Расходники, Реклама',
+        tx: new Array(
+          { id: 1, t: 'in', a: 280, c: 'Стрижка', n: 'Утренняя смена', d: n - 3600000 },
+          { id: 2, t: 'in', a: 140, c: 'Косметика', n: 'Глина и масло', d: n - 7200000 },
+          { id: 3, t: 'out', a: 85, c: 'Расходники', n: 'Лезвия и полотенца', d: n - 10800000 }
+        ),
+        debts: new Array({ id: 10, a: 95, n: 'Алексей (остаток)', d: n })
+      };
+      rn();
+    }
+
     function unlock() {
       const p = document.getElementById('pin').value.trim();
-      if (p === '7744') { cfg.unlocked = true; save(); document.getElementById('lock').style.display = 'none'; tst('✅ Касса активирована!'); rn(); }
-      else if (p === '0000') {
-        cfg.unlocked = true; cfg.name = 'BarberPro Минск';
-        cfg.tx = new Array({ id: 1, t: 'in', a: 240, c: 'Услуга', n: 'Смена', d: Date.now() - 3600000 }, { id: 2, t: 'out', a: 60, c: 'Закупка', n: 'Расходники', d: Date.now() - 7200000 });
-        cfg.debts = new Array({ id: 10, a: 85, n: 'Алексей (остаток)', d: Date.now() });
-        save(); document.getElementById('lock').style.display = 'none'; tst('🔥 Демо загружено!'); rn();
-      } else tst('❌ Неверный PIN');
+      if (p === '7744') {
+        mode = 'pro';
+        try { localStorage.setItem('biz_last_mode', 'pro'); } catch (e) {}
+        document.getElementById('lock').style.display = 'none';
+        initProData(); tst('✅ Рабочая база загружена');
+      } else if (p === '0000') {
+        mode = 'demo';
+        try { localStorage.setItem('biz_last_mode', ''); } catch (e) {}
+        document.getElementById('lock').style.display = 'none';
+        initDemoData(); tst('🔥 Демо-режим (без перезаписи базы)');
+      } else {
+        tst('❌ Неверный PIN-код');
+      }
+    }
+
+    function logout() {
+      mode = '';
+      try { localStorage.setItem('biz_last_mode', ''); } catch (e) {}
+      document.getElementById('pin').value = '';
+      closeM(); document.getElementById('lock').style.display = 'flex';
+      tst('🔒 Экран заблокирован');
     }
 
     function setP(p) { per = p; document.querySelectorAll('.tb').forEach(b => b.classList.remove('act')); document.getElementById('p-' + p).classList.add('act'); rn(); }
@@ -155,7 +183,7 @@
       const n = document.getElementById('nte').value.trim();
       if (curType === 'debt') cfg.debts.push({ id: Date.now(), a, n: n || 'Клиент', d: Date.now() });
       else cfg.tx.push({ id: Date.now(), t: curType, a, c: document.getElementById('cat').value, n, d: Date.now() });
-      save(); closeM(); rn(); tst('✅ Сохранено в облако');
+      save(); closeM(); rn(); tst('✅ Сохранено');
     }
 
     function payD(id) { const x = cfg.debts.find(i => i.id === id); if (x) { cfg.tx.push({ id: Date.now(), t: 'in', a: x.a, c: 'Погашение долга', n: x.n, d: Date.now() }); cfg.debts = cfg.debts.filter(i => i.id !== id); save(); rn(); tst('💰 Оплачено!'); } }
@@ -164,9 +192,13 @@
     function saveSet() { cfg.name = document.getElementById('s-name').value.trim() || 'Мой Бизнес'; cfg.cur = document.getElementById('s-cur').value; cfg.goal = parseFloat(document.getElementById('s-goal').value) || 5000; cfg.cin = document.getElementById('s-cin').value; cfg.cout = document.getElementById('s-cout').value; save(); closeM(); rn(); tst('✅ Настройки обновлены'); }
     function closeM() { document.getElementById('m-tr').style.display = 'none'; document.getElementById('m-set').style.display = 'none'; }
     function rep() { let inc = 0, exp = 0; cfg.tx.forEach(x => { if (x.t === 'in') inc += x.a; else exp += x.a; }); const txt = '📊 ' + cfg.name + '\nВыручка: ' + inc + ' ' + cfg.cur + '\nРасходы: ' + exp + ' ' + cfg.cur + '\nПрибыль: ' + (inc - exp) + ' ' + cfg.cur; if (navigator.clipboard) navigator.clipboard.writeText(txt); tst('📋 Отчет скопирован!'); }
-    function clr() { cfg.tx = new Array(); cfg.debts = new Array(); save(); rn(); tst('🧹 Демо очищено'); }
-    function logout() { cfg.unlocked = false; save(); closeM(); document.getElementById('lock').style.display = 'flex'; tst('🔒 Касса заблокирована'); }
-    load();
+    function clr() { cfg.tx = new Array(); cfg.debts = new Array(); save(); rn(); tst('🧹 Записи очищены'); }
+
+    try {
+      if (localStorage.getItem('biz_last_mode') === 'pro') {
+        mode = 'pro'; document.getElementById('lock').style.display = 'none'; initProData();
+      }
+    } catch (e) {}
   </script>
 </body>
 </html>

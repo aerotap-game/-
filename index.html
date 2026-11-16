@@ -147,8 +147,7 @@
             <button type="button" class="btn-action btn-income" id="btn-save-tx" onclick="window.saveTransaction()">Сохранить операцию</button>
         </div>
     </div>
-
-    <script>
+<script>
         (function() {
             const tg = window.Telegram && window.Telegram.WebApp;
             if (tg) {
@@ -220,7 +219,6 @@
             function saveData() {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
             }
-
             function showToast(text) {
                 const t = document.getElementById('toast');
                 t.innerText = text;
@@ -273,115 +271,148 @@
 
                 document.getElementById('tx-count').innerText = `${filtered.length} записей`;
                 const listEl = document.getElementById('tx-list');
-if (filtered.length === 0) {
-listEl.innerHTML = <div style="text-align:center;color:var(--text-secondary);padding:28px 0;font-size:13px;">Операций за выбранный период пока нет</div>;
-return;
-}
-listEl.innerHTML = filtered.map(tx => {
-const d = new Date(tx.ts);
-const dateStr = d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' }) + ' ' + d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-const sign = tx.type === 'income' ? '+' : '–';
-const cls = tx.type === 'income' ? 'val-inc' : 'val-exp';
-const noteText = tx.note ? • ${tx.note} : '';
-return <div class="tx-item"> <div class="tx-left"> <div class="tx-icon">${tx.icon}</div> <div class="tx-details"> <div class="tx-cat">${tx.category}</div> <div class="tx-meta">${dateStr}${noteText}</div> </div> </div> <div class="tx-right"> <span class="tx-amount ${cls}">${sign}${formatMoney(tx.amount)}</span> <button type="button" class="btn-del" onclick="window.deleteTx(${tx.id})">✕</button> </div> </div>;
-}).join('');
-}
-window.setPeriod = function(period, btnEl) {
-currentPeriod = period;
-document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
-if (btnEl) btnEl.classList.add('active');
-render();
-};
-window.openModal = function(type) {
-modalType = type;
-document.getElementById('modal-title').innerText = type === 'income' ? 'Добавить приход' : 'Добавить расход';
-const saveBtn = document.getElementById('btn-save-tx');
-saveBtn.className = 'btn-action ' + (type === 'income' ? 'btn-income' : 'btn-expense');
-const sel = document.getElementById('inp-category');
-sel.innerHTML = CATEGORIES[type].map(c => <option value="${c.name}">${c.icon} ${c.name}</option>).join('');
-document.getElementById('inp-amount').value = '';
-document.getElementById('inp-note').value = '';
-document.getElementById('modal-backdrop').classList.add('open');
-};
-window.closeModal = function() {
-document.getElementById('modal-backdrop').classList.remove('open');
-};
-window.saveTransaction = function() {
-const amount = parseFloat(document.getElementById('inp-amount').value);
-if (!amount || amount <= 0) {
-showToast('Введите сумму больше 0');
-return;
-}
-const catName = document.getElementById('inp-category').value;
-const catObj = CATEGORIES[modalType].find(c => c.name === catName) || { icon: '💵' };
-const note = document.getElementById('inp-note').value.trim();
-transactions.push({
-id: Date.now(),
-type: modalType,
-category: catName,
-icon: catObj.icon,
-amount: amount,
-note: note,
-ts: Date.now()
-});
-saveData();
-window.closeModal();
-render();
-if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-showToast(modalType === 'income' ? 'Приход добавлен' : 'Расход записан');
-};
-window.deleteTx = function(id) {
-transactions = transactions.filter(t => t.id !== id);
-saveData();
-render();
-showToast('Запись удалена');
-};
-window.exportReport = function() {
-const filtered = filterByPeriod(transactions);
-let inc = 0, exp = 0;
-filtered.forEach(tx => tx.type === 'income' ? inc += tx.amount : exp += tx.amount);
-const profit = inc - exp;
-const margin = inc > 0 ? Math.round((profit / inc) * 100) : 0;
-const periodNames = { today: 'Сегодня', week: 'Неделя', month: 'Месяц', all: 'Всё время' };
-const report = [
-📊 Финансовый отчет (${periodNames[currentPeriod]}),
-💰 Выручка: ${formatMoney(inc)},
-📉 Расходы: ${formatMoney(exp)},
-✅ Чистая прибыль: ${formatMoney(profit)},
-📈 Рентабельность: ${margin}%,
-🧾 Операций: ${filtered.length}
-].join('\n');
-if (navigator.clipboard && navigator.clipboard.writeText) {
-navigator.clipboard.writeText(report).then(() => showToast('Отчет скопирован в буфер!'));
-} else {
-const ta = document.createElement('textarea');
-ta.value = report;
-document.body.appendChild(ta);
-ta.select();
-document.execCommand('copy');
-ta.remove();
-showToast('Отчет скопирован!');
-}
-};
-window.handleResetClick = function() {
-const btn = document.getElementById('btn-reset');
-if (!resetArmed) {
-resetArmed = true;
-btn.innerText = '⚠️ Нажми еще раз для очистки';
-resetTimer = setTimeout(() => {
-resetArmed = false;
-btn.innerText = '🗑️ Сбросить демо';
-}, 3000);
-return;
-}
-clearTimeout(resetTimer);
-resetArmed = false;
-btn.innerText = '🗑️ Сбросить демо';
-transactions = [];
-saveData();
-render();
-showToast('База очищена для клиента!');
-};
-loadData();
-render();
-})();
+
+                if (filtered.length === 0) {
+                    listEl.innerHTML = `<div style="text-align:center;color:var(--text-secondary);padding:28px 0;font-size:13px;">Операций за выбранный период пока нет</div>`;
+                    return;
+                }
+
+                listEl.innerHTML = filtered.map(tx => {
+                    const d = new Date(tx.ts);
+                    const dateStr = d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' }) + ' ' + d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+                    const sign = tx.type === 'income' ? '+' : '–';
+                    const cls = tx.type === 'income' ? 'val-inc' : 'val-exp';
+                    const noteText = tx.note ? ` • ${tx.note}` : '';
+                    return `
+                        <div class="tx-item">
+                            <div class="tx-left">
+                                <div class="tx-icon">${tx.icon}</div>
+                                <div class="tx-details">
+                                    <div class="tx-cat">${tx.category}</div>
+                                    <div class="tx-meta">${dateStr}${noteText}</div>
+                                </div>
+                            </div>
+                            <div class="tx-right">
+                                <span class="tx-amount ${cls}">${sign}${formatMoney(tx.amount)}</span>
+                                <button type="button" class="btn-del" onclick="window.deleteTx(${tx.id})">✕</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            window.setPeriod = function(period, btnEl) {
+                currentPeriod = period;
+                document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+                if (btnEl) btnEl.classList.add('active');
+                render();
+            };
+
+            window.openModal = function(type) {
+                modalType = type;
+                document.getElementById('modal-title').innerText = type === 'income' ? 'Добавить приход' : 'Добавить расход';
+                const saveBtn = document.getElementById('btn-save-tx');
+                saveBtn.className = 'btn-action ' + (type === 'income' ? 'btn-income' : 'btn-expense');
+
+                const sel = document.getElementById('inp-category');
+                sel.innerHTML = CATEGORIES[type].map(c => `<option value="${c.name}">${c.icon} ${c.name}</option>`).join('');
+
+                document.getElementById('inp-amount').value = '';
+                document.getElementById('inp-note').value = '';
+                document.getElementById('modal-backdrop').classList.add('open');
+            };
+
+            window.closeModal = function() {
+                document.getElementById('modal-backdrop').classList.remove('open');
+            };
+
+            window.saveTransaction = function() {
+                const amount = parseFloat(document.getElementById('inp-amount').value);
+                if (!amount || amount <= 0) {
+                    showToast('Введите сумму больше 0');
+                    return;
+                }
+                const catName = document.getElementById('inp-category').value;
+                const catObj = CATEGORIES[modalType].find(c => c.name === catName) || { icon: '💵' };
+                const note = document.getElementById('inp-note').value.trim();
+
+                transactions.push({
+                    id: Date.now(),
+                    type: modalType,
+                    category: catName,
+                    icon: catObj.icon,
+                    amount: amount,
+                    note: note,
+                    ts: Date.now()
+                });
+
+                saveData();
+                window.closeModal();
+                render();
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                showToast(modalType === 'income' ? 'Приход добавлен' : 'Расход записан');
+            };
+
+            window.deleteTx = function(id) {
+                transactions = transactions.filter(t => t.id !== id);
+                saveData();
+                render();
+                showToast('Запись удалена');
+            };
+
+            window.exportReport = function() {
+                const filtered = filterByPeriod(transactions);
+                let inc = 0, exp = 0;
+                filtered.forEach(tx => tx.type === 'income' ? inc += tx.amount : exp += tx.amount);
+                const profit = inc - exp;
+                const margin = inc > 0 ? Math.round((profit / inc) * 100) : 0;
+                const periodNames = { today: 'Сегодня', week: 'Неделя', month: 'Месяц', all: 'Всё время' };
+
+                const report = [
+                    `📊 Финансовый отчет (${periodNames[currentPeriod]})`,
+                    `💰 Выручка: ${formatMoney(inc)}`,
+                    `📉 Расходы: ${formatMoney(exp)}`,
+                    `✅ Чистая прибыль: ${formatMoney(profit)}`,
+                    `📈 Рентабельность: ${margin}%`,
+                    `🧾 Операций: ${filtered.length}`
+                ].join('\n');
+
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(report).then(() => showToast('Отчет скопирован в буфер!'));
+                } else {
+                    const ta = document.createElement('textarea');
+                    ta.value = report;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    ta.remove();
+                    showToast('Отчет скопирован!');
+                }
+            };
+
+            window.handleResetClick = function() {
+                const btn = document.getElementById('btn-reset');
+                if (!resetArmed) {
+                    resetArmed = true;
+                    btn.innerText = '⚠️ Нажми еще раз для очистки';
+                    resetTimer = setTimeout(() => {
+                        resetArmed = false;
+                        btn.innerText = '🗑️ Сбросить демо';
+                    }, 3000);
+                    return;
+                }
+                clearTimeout(resetTimer);
+                resetArmed = false;
+                btn.innerText = '🗑️ Сбросить демо';
+                transactions = [];
+                saveData();
+                render();
+                showToast('База очищена для клиента!');
+            };
+
+            loadData();
+            render();
+        })();
+    </script>
+</body>
+</html>

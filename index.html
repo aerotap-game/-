@@ -9,13 +9,9 @@
     --bg: #F2F2F7; --card: #FFFFFF; --text: #000000; --sub: #8E8E93;
     --blue: #007AFF; --green: #34C759; --red: #FF3B30; --orange: #FF9500; --line: #E5E5EA;
   }
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
   body { margin: 0; padding: 0 0 85px 0; background: var(--bg); color: var(--text); user-select: none; }
-
-  #pin-screen {
-    position: fixed; inset: 0; background: #000; color: #fff; z-index: 9999;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-  }
+  #pin-screen { position: fixed; inset: 0; background: #000; color: #fff; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   .pin-logo { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
   .pin-logo span { color: var(--blue); }
   .pin-sub { color: var(--sub); font-size: 14px; margin-bottom: 24px; }
@@ -23,26 +19,17 @@
   .pin-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #555; }
   .pin-dot.active { background: #fff; border-color: #fff; }
   .pin-pad { display: grid; grid-template-columns: repeat(3, 74px); gap: 16px; }
-  .pin-btn {
-    width: 74px; height: 74px; border-radius: 50%; background: #1C1C1E; border: none;
-    color: #fff; font-size: 26px; font-weight: 500; cursor: pointer;
-  }
+  .pin-btn { width: 74px; height: 74px; border-radius: 50%; background: #1C1C1E; border: none; color: #fff; font-size: 26px; cursor: pointer; }
   .pin-btn:active { background: #3A3A3C; }
-
-  .header {
-    background: var(--card); padding: 14px 16px; position: sticky; top: 0; z-index: 100;
-    border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center;
-  }
+  .header { background: var(--card); padding: 14px 16px; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
   .brand { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
   .badge { background: #000; color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 6px; }
   .curr-wrap { display: flex; background: var(--bg); border-radius: 8px; padding: 2px; }
   .curr-btn { border: none; background: transparent; padding: 5px 10px; font-size: 13px; font-weight: 600; border-radius: 6px; color: var(--sub); cursor: pointer; }
-  .curr-btn.active { background: var(--card); color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-
+  .curr-btn.active { background: var(--card); color: var(--text); }
   .chips { padding: 10px 16px 0; display: flex; gap: 8px; overflow-x: auto; }
-  .chip { background: var(--card); border: 1px solid var(--line); padding: 6px 12px; border-radius: 16px; font-size: 13px; font-weight: 500; white-space: nowrap; cursor: pointer; }
+  .chip { background: var(--card); border: 1px solid var(--line); padding: 6px 12px; border-radius: 16px; font-size: 13px; white-space: nowrap; cursor: pointer; }
   .chip.active { background: #000; color: #fff; border-color: #000; }
-
   .wrap { padding: 14px 16px; }
   .card { background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
   .lbl { font-size: 13px; color: var(--sub); }
@@ -51,21 +38,17 @@
   .box { background: var(--bg); padding: 10px; border-radius: 12px; }
   .box-num { font-size: 16px; font-weight: 700; margin-top: 2px; }
   .green { color: var(--green); } .red { color: var(--red); } .orange { color: var(--orange); }
-
   .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
   .btn-act { border: none; padding: 14px; border-radius: 14px; font-size: 15px; font-weight: 600; color: #fff; cursor: pointer; }
   .btn-in { background: var(--green); } .btn-out { background: var(--red); }
-
   .row { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--line); }
   .row:last-child { border-bottom: none; padding-bottom: 0; }
   .row-title { font-size: 15px; font-weight: 600; }
   .row-sub { font-size: 12px; color: var(--sub); margin-top: 2px; }
   .row-val { font-size: 15px; font-weight: 700; }
-
   .nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); border-top: 1px solid var(--line); display: flex; justify-content: space-around; padding: 8px 0 18px; z-index: 100; }
   .nav-btn { border: none; background: none; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11px; font-weight: 600; color: var(--sub); cursor: pointer; }
   .nav-btn.active { color: var(--blue); }
-
   .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 500; display: none; align-items: flex-end; }
   .modal.open { display: flex; }
   .modal-box { background: var(--card); width: 100%; border-radius: 20px 20px 0 0; padding: 18px 16px 28px; }
@@ -78,7 +61,6 @@
 </style>
 </head>
 <body>
-
 <div id="pin-screen">
   <div class="pin-logo"> TheApple<span>.by</span></div>
   <div class="pin-sub" id="pin-msg">Введите PIN-код (демо: 1111)</div>
@@ -115,7 +97,6 @@
     <button class="chip" data-p="month">Месяц</button>
     <button class="chip" data-p="all">Всё время</button>
   </div>
-
   <div class="wrap">
     <div class="card">
       <div class="lbl">Чистая прибыль (<span id="p-lbl">Сегодня</span>)</div>
@@ -125,12 +106,10 @@
         <div class="box"><div class="lbl">Расходы</div><div class="box-num red" id="out-val">0 BYN</div></div>
       </div>
     </div>
-
     <div class="actions">
       <button class="btn-act btn-in" id="open-in">+ Приход</button>
       <button class="btn-act btn-out" id="open-out">− Расход</button>
     </div>
-
     <div class="card">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
         <b style="font-size:16px;">История операций</b>
@@ -140,6 +119,7 @@
     </div>
   </div>
 </div>
+
 <div id="p-debts" class="page">
   <div class="wrap">
     <div class="card">
@@ -147,10 +127,7 @@
       <div class="big-num orange" id="debt-val">0 BYN</div>
       <button class="btn-main" style="background:var(--blue);" id="open-debt">+ Добавить рассрочку</button>
     </div>
-    <div class="card">
-      <b style="font-size:16px; display:block; margin-bottom:8px;">Активные клиенты</b>
-      <div id="debt-list"></div>
-    </div>
+    <div class="card"><b style="font-size:16px; display:block; margin-bottom:8px;">Активные клиенты</b><div id="debt-list"></div></div>
   </div>
 </div>
 
@@ -162,9 +139,7 @@
       <div class="f-group"><label class="f-lbl">Новый PIN (4 цифры)</label><input type="password" maxlength="4" inputmode="numeric" class="f-in" id="pin-in" placeholder="1111"></div>
       <button class="btn-main" id="save-set">Сохранить</button>
     </div>
-    <div class="card">
-      <button class="btn-main" style="background:var(--red);" id="reset-btn">Очистить все данные</button>
-    </div>
+    <div class="card"><button class="btn-main" style="background:var(--red);" id="reset-btn">Очистить все данные</button></div>
   </div>
 </div>
 
@@ -176,15 +151,10 @@
 
 <div class="modal" id="m-tx">
   <div class="modal-box">
-    <div style="display:flex; justify-content:space-between; margin-bottom:14px;">
-      <b style="font-size:18px;" id="m-tx-title">Новая операция</b>
-      <button class="btn-sm" style="background:var(--bg); color:#000;" id="close-tx">✕</button>
-    </div>
+    <div style="display:flex; justify-content:space-between; margin-bottom:14px;"><b style="font-size:18px;" id="m-tx-title">Новая операция</b><button class="btn-sm" style="background:var(--bg); color:#000;" id="close-tx">✕</button></div>
     <div class="f-group"><label class="f-lbl">Сумма (<span id="m-curr">BYN</span>)</label><input type="number" inputmode="decimal" class="f-in" id="tx-sum" placeholder="0"></div>
     <div class="f-group"><label class="f-lbl">Категория</label><select class="f-in" id="tx-cat"></select></div>
-    <div class="f-group"><label class="f-lbl">Точка</label>
-      <select class="f-in" id="tx-br"><option>Офис Масюковщина</option><option>ПВЗ</option><option>Доставка</option></select>
-    </div>
+    <div class="f-group"><label class="f-lbl">Точка</label><select class="f-in" id="tx-br"><option>Офис Масюковщина</option><option>ПВЗ</option><option>Доставка</option></select></div>
     <div class="f-group"><label class="f-lbl">Комментарий</label><input type="text" class="f-in" id="tx-note" placeholder="iPhone 15 Pro"></div>
     <button class="btn-main" id="add-tx">Сохранить</button>
   </div>
@@ -192,142 +162,137 @@
 
 <div class="modal" id="m-debt">
   <div class="modal-box">
-    <div style="display:flex; justify-content:space-between; margin-bottom:14px;">
-      <b style="font-size:18px;">Новая рассрочка</b>
-      <button class="btn-sm" style="background:var(--bg); color:#000;" id="close-debt">✕</button>
-    </div>
+    <div style="display:flex; justify-content:space-between; margin-bottom:14px;"><b style="font-size:18px;">Новая рассрочка</b><button class="btn-sm" style="background:var(--bg); color:#000;" id="close-debt">✕</button></div>
     <div class="f-group"><label class="f-lbl">Клиент</label><input type="text" class="f-in" id="d-client" placeholder="Имя / Телефон"></div>
     <div class="f-group"><label class="f-lbl">Устройство</label><input type="text" class="f-in" id="d-item" placeholder="iPhone 14 Pro"></div>
     <div class="f-group"><label class="f-lbl">Сумма долга (<span id="d-curr">BYN</span>)</label><input type="number" inputmode="decimal" class="f-in" id="d-sum" placeholder="0"></div>
-    <div class="f-group"><label class="f-lbl">Точка</label>
-      <select class="f-in" id="d-br"><option>Офис Масюковщина</option><option>ПВЗ</option><option>Доставка</option></select>
-    </div>
+    <div class="f-group"><label class="f-lbl">Точка</label><select class="f-in" id="d-br"><option>Офис Масюковщина</option><option>ПВЗ</option><option>Доставка</option></select></div>
     <button class="btn-main" style="background:var(--blue);" id="add-debt">Добавить</button>
   </div>
 </div>
-
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  let state = JSON.parse(localStorage.getItem('theapple_v5')) || {
-    pin: '1111', rate: 3.25, curr: 'BYN', branch: 'Все точки', period: 'day', txs: [], debts: []
-  };
-  let pinBuf = '', txType = 'in';
-  const save = () => localStorage.setItem('theapple_v5', JSON.stringify(state));
-  const fmt = (byn) => state.curr === 'USD' ? '$' + (byn / state.rate).toFixed(1).replace(/\.0$/, '') : Math.round(byn).toLocaleString('ru-RU') + ' BYN';
+let state = JSON.parse(localStorage.getItem('theapple_v6')) || {
+  pin: '1111', rate: 3.25, curr: 'BYN', branch: 'Все точки', period: 'day', txs: [], debts: []
+};
+let pinBuf = '', txType = 'in';
+const save = () => localStorage.setItem('theapple_v6', JSON.stringify(state));
+const fmt = (byn) => state.curr === 'USD' ? '$' + (byn / state.rate).toFixed(1).replace(/\.0$/, '') : Math.round(byn).toLocaleString('ru-RU') + ' BYN';
 
-  document.getElementById('pin-pad').addEventListener('click', (e) => {
-    const k = e.target.dataset.k;
-    if (!k) return;
-    if (k === 'del') pinBuf = pinBuf.slice(0, -1);
-    else if (pinBuf.length < 4) pinBuf += k;
-    for (let i = 0; i < 4; i++) document.getElementById('d' + i).classList.toggle('active', i < pinBuf.length);
-    if (pinBuf.length === 4) {
-      if (pinBuf === state.pin) document.getElementById('pin-screen').style.display = 'none';
-      else {
-        document.getElementById('pin-msg').innerText = 'Неверный PIN';
-        document.getElementById('pin-msg').style.color = '#FF3B30';
-        setTimeout(() => { pinBuf = ''; for (let i = 0; i < 4; i++) document.getElementById('d' + i).classList.remove('active'); }, 400);
-      }
+document.getElementById('pin-pad').onclick = (e) => {
+  const k = e.target.dataset.k;
+  if (!k) return;
+  if (k === 'del') pinBuf = pinBuf.slice(0, -1);
+  else if (pinBuf.length < 4) pinBuf += k;
+  for (let i = 0; i < 4; i++) document.getElementById('d' + i).classList.toggle('active', i < pinBuf.length);
+  if (pinBuf.length === 4) {
+    if (pinBuf === state.pin) document.getElementById('pin-screen').style.display = 'none';
+    else {
+      document.getElementById('pin-msg').innerText = 'Неверный PIN';
+      document.getElementById('pin-msg').style.color = '#FF3B30';
+      setTimeout(() => { pinBuf = ''; for (let i = 0; i < 4; i++) document.getElementById('d' + i).classList.remove('active'); }, 400);
     }
-  });
+  }
+};
 
-  const setCurr = (c) => {
-    state.curr = c; save();
-    document.getElementById('c-byn').classList.toggle('active', c === 'BYN');
-    document.getElementById('c-usd').classList.toggle('active', c === 'USD');
-    document.getElementById('m-curr').innerText = c;
-    document.getElementById('d-curr').innerText = c;
-    render();
-  };
-  document.getElementById('c-byn').onclick = () => setCurr('BYN');
-  document.getElementById('c-usd').onclick = () => setCurr('USD');
+const setCurr = (c) => {
+  state.curr = c; save();
+  document.getElementById('c-byn').classList.toggle('active', c === 'BYN');
+  document.getElementById('c-usd').classList.toggle('active', c === 'USD');
+  document.getElementById('m-curr').innerText = c;
+  document.getElementById('d-curr').innerText = c;
+  render();
+};
+document.getElementById('c-byn').onclick = () => setCurr('BYN');
+document.getElementById('c-usd').onclick = () => setCurr('USD');
 
-  document.getElementById('branch-bar').addEventListener('click', (e) => {
-    if (!e.target.dataset.b) return;
-    state.branch = e.target.dataset.b;
-    document.querySelectorAll('#branch-bar .chip').forEach(c => c.classList.remove('active'));
-    e.target.classList.add('active'); render();
-  });
-  document.getElementById('period-bar').addEventListener('click', (e) => {
-    if (!e.target.dataset.p) return;
-    state.period = e.target.dataset.p;
-    document.querySelectorAll('#period-bar .chip').forEach(c => c.classList.remove('active'));
-    e.target.classList.add('active');
-    document.getElementById('p-lbl').innerText = e.target.innerText; render();
-  });
+document.getElementById('branch-bar').onclick = (e) => {
+  if (!e.target.dataset.b) return;
+  state.branch = e.target.dataset.b;
+  document.querySelectorAll('#branch-bar .chip').forEach(c => c.classList.remove('active'));
+  e.target.classList.add('active'); render();
+};
+document.getElementById('period-bar').onclick = (e) => {
+  if (!e.target.dataset.p) return;
+  state.period = e.target.dataset.p;
+  document.querySelectorAll('#period-bar .chip').forEach(c => c.classList.remove('active'));
+  e.target.classList.add('active');
+  document.getElementById('p-lbl').innerText = e.target.innerText; render();
+};
 
-  document.getElementById('nav-bar').addEventListener('click', (e) => {
-    const btn = e.target.closest('.nav-btn');
-    if (!btn) return;
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('p-' + btn.dataset.tab).classList.add('active');
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  });
+document.getElementById('nav-bar').onclick = (e) => {
+  const btn = e.target.closest('.nav-btn');
+  if (!btn) return;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('p-' + btn.dataset.tab).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+};
 
-  const openTx = (type) => {
-    txType = type;
-    document.getElementById('m-tx-title').innerText = type === 'in' ? 'Новый приход' : 'Новый расход';
-    document.getElementById('tx-cat').innerHTML = type === 'in'
-      ? '<option>Продажа iPhone</option><option>Trade-in доплата</option><option>Аксессуары / Стекла</option><option>Ремонт</option>'
-      : '<option>Закупка техники</option><option>Выкуп Trade-in</option><option>Курьер / Доставка</option><option>Реклама / Аренда</option>';
-    document.getElementById('tx-sum').value = ''; document.getElementById('tx-note').value = '';
-    document.getElementById('m-tx').classList.add('open');
-  };
-  document.getElementById('open-in').onclick = () => openTx('in');
-  document.getElementById('open-out').onclick = () => openTx('out');
-  document.getElementById('close-tx').onclick = () => document.getElementById('m-tx').classList.remove('open');
+const openTx = (type) => {
+  txType = type;
+  document.getElementById('m-tx-title').innerText = type === 'in' ? 'Новый приход' : 'Новый расход';
+  document.getElementById('tx-cat').innerHTML = type === 'in'
+    ? '<option>Продажа iPhone</option><option>Trade-in доплата</option><option>Аксессуары / Стекла</option><option>Ремонт</option>'
+    : '<option>Закупка техники</option><option>Выкуп Trade-in</option><option>Курьер / Доставка</option><option>Реклама / Аренда</option>';
+  document.getElementById('tx-sum').value = ''; document.getElementById('tx-note').value = '';
+  document.getElementById('m-tx').classList.add('open');
+};
+document.getElementById('open-in').onclick = () => openTx('in');
+document.getElementById('open-out').onclick = () => openTx('out');
+document.getElementById('close-tx').onclick = () => document.getElementById('m-tx').classList.remove('open');
 
-  document.getElementById('add-tx').onclick = () => {
-    const v = parseFloat(document.getElementById('tx-sum').value);
-    if (!v || v <= 0) return;
-    state.txs.push({ id: Date.now(), type: txType, byn: state.curr === 'USD' ? v * state.rate : v, cat: document.getElementById('tx-cat').value, br: document.getElementById('tx-br').value, note: document.getElementById('tx-note').value, date: Date.now() });
-    save(); document.getElementById('m-tx').classList.remove('open'); render();
-  };
+document.getElementById('add-tx').onclick = () => {
+  const v = parseFloat(document.getElementById('tx-sum').value);
+  if (!v || v <= 0) return;
+  state.txs.push({ id: Date.now(), type: txType, byn: state.curr === 'USD' ? v * state.rate : v, cat: document.getElementById('tx-cat').value, br: document.getElementById('tx-br').value, note: document.getElementById('tx-note').value, date: Date.now() });
+  save(); document.getElementById('m-tx').classList.remove('open'); render();
+};
 
-  document.getElementById('open-debt').onclick = () => document.getElementById('m-debt').classList.add('open');
-  document.getElementById('close-debt').onclick = () => document.getElementById('m-debt').classList.remove('open');
-  document.getElementById('add-debt').onclick = () => {
-    const cl = document.getElementById('d-client').value.trim(), v = parseFloat(document.getElementById('d-sum').value);
-    if (!cl || !v || v <= 0) return;
-    state.debts.push({ id: Date.now(), client: cl, item: document.getElementById('d-item').value || 'Рассрочка', byn: state.curr === 'USD' ? v * state.rate : v, br: document.getElementById('d-br').value });
-    save(); document.getElementById('m-debt').classList.remove('open'); render();
-  };
+document.getElementById('open-debt').onclick = () => document.getElementById('m-debt').classList.add('open');
+document.getElementById('close-debt').onclick = () => document.getElementById('m-debt').classList.remove('open');
+document.getElementById('add-debt').onclick = () => {
+  const cl = document.getElementById('d-client').value.trim(), v = parseFloat(document.getElementById('d-sum').value);
+  if (!cl || !v || v <= 0) return;
+  state.debts.push({ id: Date.now(), client: cl, item: document.getElementById('d-item').value || 'Рассрочка', byn: state.curr === 'USD' ? v * state.rate : v, br: document.getElementById('d-br').value });
+  save(); document.getElementById('m-debt').classList.remove('open'); render();
+};
 
-  document.getElementById('debt-list').addEventListener('click', (e) => {
-    const id = Number(e.target.dataset.close);
-    if (!id) return;
-    const idx = state.debts.findIndex(d => d.id === id);
-    if (idx > -1) {
-      const d = state.debts[idx];
-      state.txs.push({ id: Date.now(), type: 'in', byn: d.byn, cat: 'Оплата рассрочки', br: d.br, note: d.client, date: Date.now() });
-      state.debts.splice(idx, 1); save(); render();
-    }
-  });
+document.getElementById('debt-list').onclick = (e) => {
+  const id = Number(e.target.dataset.close);
+  if (!id) return;
+  const idx = state.debts.findIndex(d => d.id === id);
+  if (idx > -1) {
+    const d = state.debts[idx];
+    state.txs.push({ id: Date.now(), type: 'in', byn: d.byn, cat: 'Оплата рассрочки', br: d.br, note: d.client, date: Date.now() });
+    state.debts.splice(idx, 1); save(); render();
+  }
+};
 
-  document.getElementById('rate-in').value = state.rate;
-  document.getElementById('save-set').onclick = () => {
-    const r = parseFloat(document.getElementById('rate-in').value); if (r > 0) state.rate = r;
-    const p = document.getElementById('pin-in').value.trim(); if (/^\d{4}$/.test(p)) state.pin = p;
-    save(); render(); alert('Сохранено!');
-  };
-  document.getElementById('reset-btn').onclick = () => { state.txs = []; state.debts = []; save(); render(); alert('Очищено!'); };
-  document.getElementById('copy-rep').onclick = () => {
-    const txt = ` Отчет TheApple.by (${state.branch}):\nВыручка: ${document.getElementById('in-val').innerText}\nРасходы: ${document.getElementById('out-val').innerText}\nЧистая прибыль: ${document.getElementById('net-val').innerText}`;
-    navigator.clipboard.writeText(txt); alert('Отчет скопирован!');
-  };
+document.getElementById('rate-in').value = state.rate;
+document.getElementById('save-set').onclick = () => {
+  const r = parseFloat(document.getElementById('rate-in').value); if (r > 0) state.rate = r;
+  const p = document.getElementById('pin-in').value.trim(); if (/^\d{4}$/.test(p)) state.pin = p;
+  save(); render(); alert('Сохранено!');
+};
+document.getElementById('reset-btn').onclick = () => { state.txs = []; state.debts = []; save(); render(); alert('Очищено!'); };
+document.getElementById('copy-rep').onclick = () => {
+  const txt = ` Отчет TheApple.by (${state.branch}):\nВыручка: ${document.getElementById('in-val').innerText}\nРасходы: ${document.getElementById('out-val').innerText}\nЧистая прибыль: ${document.getElementById('net-val').innerText}`;
+  navigator.clipboard.writeText(txt); alert('Отчет скопирован!');
+};
 
-  function render() {
-const d = new Date(), dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime(), monStart = new Date(d.getFullYear(), d.getMonth(), 1).getTime();
-const list = state.txs.filter(t => (state.branch === 'Все точки' || t.br === state.branch) && (state.period === 'all' || (state.period === 'day' ? t.date >= dayStart : t.date >= monStart)));
-let inc = 0, out = 0; list.forEach(t => t.type === 'in' ? inc += t.byn : out += t.byn);
-document.getElementById('net-val').innerText = fmt(inc - out);
-document.getElementById('in-val').innerText = fmt(inc);
-document.getElementById('out-val').innerText = fmt(out);
-document.getElementById('tx-list').innerHTML = list.length ? list.slice().reverse().map(t => <div class="row"><div><div class="row-title">${t.cat}</div><div class="row-sub">${t.br}${t.note ? ' • ' + t.note : ''}</div></div><div class="row-val ${t.type === 'in' ? 'green' : 'red'}">${t.type === 'in' ? '+' : '−'}${fmt(t.byn)}</div></div>).join('') : 'Нет операций';
-let dSum = 0; state.debts.forEach(x => dSum += x.byn);
-document.getElementById('debt-val').innerText = fmt(dSum);
-document.getElementById('debt-list').innerHTML = state.debts.length ? state.debts.map(x => <div class="row"><div><div class="row-title">${x.client}</div><div class="row-sub">${x.item} • ${fmt(x.byn)}</div></div><button class="btn-sm" style="background:var(--green);" data-close="${x.id}">Закрыть ✓</button></div>).join('') : 'Нет долгов';
+function render() {
+  const d = new Date(), dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime(), monStart = new Date(d.getFullYear(), d.getMonth(), 1).getTime();
+  const list = state.txs.filter(t => (state.branch === 'Все точки' || t.br === state.branch) && (state.period === 'all' || (state.period === 'day' ? t.date >= dayStart : t.date >= monStart)));
+  let inc = 0, out = 0; list.forEach(t => t.type === 'in' ? inc += t.byn : out += t.byn);
+  document.getElementById('net-val').innerText = fmt(inc - out);
+  document.getElementById('in-val').innerText = fmt(inc);
+  document.getElementById('out-val').innerText = fmt(out);
+  document.getElementById('tx-list').innerHTML = list.length ? list.slice().reverse().map(t => `<div class="row"><div><div class="row-title">${t.cat}</div><div class="row-sub">${t.br}${t.note ? ' • ' + t.note : ''}</div></div><div class="row-val ${t.type === 'in' ? 'green' : 'red'}">${t.type === 'in' ? '+' : '−'}${fmt(t.byn)}</div></div>`).join('') : '<div style="color:var(--sub); font-size:14px; padding:10px 0;">Нет операций</div>';
+  let dSum = 0; state.debts.forEach(x => dSum += x.byn);
+  document.getElementById('debt-val').innerText = fmt(dSum);
+  document.getElementById('debt-list').innerHTML = state.debts.length ? state.debts.map(x => `<div class="row"><div><div class="row-title">${x.client}</div><div class="row-sub">${x.item} • ${fmt(x.byn)}</div></div><button class="btn-sm" style="background:var(--green);" data-close="${x.id}">Закрыть ✓</button></div>`).join('') : '<div style="color:var(--sub); font-size:14px; padding:10px 0;">Нет долгов</div>';
 }
 render();
-});
+</script>
+</body>
+</html>

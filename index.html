@@ -38,6 +38,7 @@
   .curr-wrap { display: flex; background: var(--bg); border-radius: 8px; padding: 2px; }
   .curr-btn { border: none; background: transparent; padding: 5px 10px; font-size: 13px; font-weight: 600; border-radius: 6px; color: var(--sub); cursor: pointer; }
   .curr-btn.active { background: var(--card); color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+
   .chips { padding: 10px 16px 0; display: flex; gap: 8px; overflow-x: auto; }
   .chip { background: var(--card); border: 1px solid var(--line); padding: 6px 12px; border-radius: 16px; font-size: 13px; font-weight: 500; white-space: nowrap; cursor: pointer; }
   .chip.active { background: #000; color: #fff; border-color: #000; }
@@ -101,12 +102,12 @@
     <button class="curr-btn" id="c-usd">USD</button>
   </div>
 </div>
-<!-- КАССА -->
+
 <div id="p-cash" class="page active">
   <div class="chips" id="branch-bar">
     <button class="chip active" data-b="Все точки">Все точки</button>
-    <button class="chip" data-b="ТЦ Европа">ТЦ Европа</button>
-    <button class="chip" data-b="Немига">Немига</button>
+    <button class="chip" data-b="Офис Масюковщина">Офис Масюковщина</button>
+    <button class="chip" data-b="ПВЗ">ПВЗ</button>
     <button class="chip" data-b="Доставка">Доставка</button>
   </div>
   <div class="chips" id="period-bar">
@@ -139,8 +140,6 @@
     </div>
   </div>
 </div>
-
-<!-- РАССРОЧКИ -->
 <div id="p-debts" class="page">
   <div class="wrap">
     <div class="card">
@@ -155,7 +154,6 @@
   </div>
 </div>
 
-<!-- НАСТРОЙКИ -->
 <div id="p-set" class="page">
   <div class="wrap">
     <div class="card">
@@ -165,19 +163,17 @@
       <button class="btn-main" id="save-set">Сохранить</button>
     </div>
     <div class="card">
-      <button class="btn-main" style="background:var(--red);" id="reset-btn">Очистить демо-данные</button>
+      <button class="btn-main" style="background:var(--red);" id="reset-btn">Очистить все данные</button>
     </div>
   </div>
 </div>
 
-<!-- НИЖНЕЕ МЕНЮ -->
 <div class="nav" id="nav-bar">
   <button class="nav-btn active" data-tab="cash"><span style="font-size:20px;">💳</span><span>Касса</span></button>
   <button class="nav-btn" data-tab="debts"><span style="font-size:20px;">📋</span><span>Рассрочки</span></button>
   <button class="nav-btn" data-tab="set"><span style="font-size:20px;">⚙️</span><span>Настройки</span></button>
 </div>
 
-<!-- МОДАЛКА ОПЕРАЦИИ -->
 <div class="modal" id="m-tx">
   <div class="modal-box">
     <div style="display:flex; justify-content:space-between; margin-bottom:14px;">
@@ -187,7 +183,7 @@
     <div class="f-group"><label class="f-lbl">Сумма (<span id="m-curr">BYN</span>)</label><input type="number" inputmode="decimal" class="f-in" id="tx-sum" placeholder="0"></div>
     <div class="f-group"><label class="f-lbl">Категория</label><select class="f-in" id="tx-cat"></select></div>
     <div class="f-group"><label class="f-lbl">Точка</label>
-      <select class="f-in" id="tx-br"><option>ТЦ Европа</option><option>Немига</option><option>Доставка</option></select>
+      <select class="f-in" id="tx-br"><option>Офис Масюковщина</option><option>ПВЗ</option><option>Доставка</option></select>
     </div>
     <div class="f-group"><label class="f-lbl">Комментарий</label><input type="text" class="f-in" id="tx-note" placeholder="iPhone 15 Pro"></div>
     <button class="btn-main" id="add-tx">Сохранить</button>
@@ -204,44 +200,30 @@
     <div class="f-group"><label class="f-lbl">Устройство</label><input type="text" class="f-in" id="d-item" placeholder="iPhone 14 Pro"></div>
     <div class="f-group"><label class="f-lbl">Сумма долга (<span id="d-curr">BYN</span>)</label><input type="number" inputmode="decimal" class="f-in" id="d-sum" placeholder="0"></div>
     <div class="f-group"><label class="f-lbl">Точка</label>
-      <select class="f-in" id="d-br"><option>ТЦ Европа</option><option>Немига</option><option>Доставка</option></select>
+      <select class="f-in" id="d-br"><option>Офис Масюковщина</option><option>ПВЗ</option><option>Доставка</option></select>
     </div>
     <button class="btn-main" style="background:var(--blue);" id="add-debt">Добавить</button>
   </div>
 </div>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const now = Date.now();
-  let state = JSON.parse(localStorage.getItem('theapple_v2')) || {
-    pin: '1111', rate: 3.25, curr: 'BYN', branch: 'Все точки', period: 'day',
-    txs: [
-      { id: 1, type: 'in', byn: 3450, cat: 'Продажа iPhone', br: 'ТЦ Европа', note: 'iPhone 15 Pro 128', date: now - 1800000 },
-      { id: 2, type: 'out', byn: 2860, cat: 'Закупка техники', br: 'ТЦ Европа', note: 'Закупка iPhone 15 Pro', date: now - 3600000 },
-      { id: 3, type: 'in', byn: 190, cat: 'Аксессуары / Стекла', br: 'Немига', note: 'Чехол + стекло', date: now - 7200000 }
-    ],
-    debts: [
-      { id: 101, client: 'Алексей (+375 29 612-XX-XX)', item: 'iPhone 15 Pro Max', byn: 650, br: 'ТЦ Европа' }
-    ]
+  let state = JSON.parse(localStorage.getItem('theapple_v5')) || {
+    pin: '1111', rate: 3.25, curr: 'BYN', branch: 'Все точки', period: 'day', txs: [], debts: []
   };
-
   let pinBuf = '', txType = 'in';
-  const save = () => localStorage.setItem('theapple_v2', JSON.stringify(state));
-  const fmt = (byn) => state.curr === 'USD'
-    ? '$' + (byn / state.rate).toFixed(1).replace(/\.0$/, '')
-    : Math.round(byn).toLocaleString('ru-RU') + ' BYN';
+  const save = () => localStorage.setItem('theapple_v5', JSON.stringify(state));
+  const fmt = (byn) => state.curr === 'USD' ? '$' + (byn / state.rate).toFixed(1).replace(/\.0$/, '') : Math.round(byn).toLocaleString('ru-RU') + ' BYN';
 
   document.getElementById('pin-pad').addEventListener('click', (e) => {
     const k = e.target.dataset.k;
     if (!k) return;
     if (k === 'del') pinBuf = pinBuf.slice(0, -1);
     else if (pinBuf.length < 4) pinBuf += k;
-
     for (let i = 0; i < 4; i++) document.getElementById('d' + i).classList.toggle('active', i < pinBuf.length);
-
     if (pinBuf.length === 4) {
-      if (pinBuf === state.pin) {
-        document.getElementById('pin-screen').style.display = 'none';
-      } else {
+      if (pinBuf === state.pin) document.getElementById('pin-screen').style.display = 'none';
+      else {
         document.getElementById('pin-msg').innerText = 'Неверный PIN';
         document.getElementById('pin-msg').style.color = '#FF3B30';
         setTimeout(() => { pinBuf = ''; for (let i = 0; i < 4; i++) document.getElementById('d' + i).classList.remove('active'); }, 400);
@@ -264,16 +246,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!e.target.dataset.b) return;
     state.branch = e.target.dataset.b;
     document.querySelectorAll('#branch-bar .chip').forEach(c => c.classList.remove('active'));
-    e.target.classList.add('active');
-    render();
+    e.target.classList.add('active'); render();
   });
   document.getElementById('period-bar').addEventListener('click', (e) => {
     if (!e.target.dataset.p) return;
     state.period = e.target.dataset.p;
     document.querySelectorAll('#period-bar .chip').forEach(c => c.classList.remove('active'));
     e.target.classList.add('active');
-    document.getElementById('p-lbl').innerText = e.target.innerText;
-    render();
+    document.getElementById('p-lbl').innerText = e.target.innerText; render();
   });
 
   document.getElementById('nav-bar').addEventListener('click', (e) => {
@@ -291,8 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('tx-cat').innerHTML = type === 'in'
       ? '<option>Продажа iPhone</option><option>Trade-in доплата</option><option>Аксессуары / Стекла</option><option>Ремонт</option>'
       : '<option>Закупка техники</option><option>Выкуп Trade-in</option><option>Курьер / Доставка</option><option>Реклама / Аренда</option>';
-    document.getElementById('tx-sum').value = '';
-    document.getElementById('tx-note').value = '';
+    document.getElementById('tx-sum').value = ''; document.getElementById('tx-note').value = '';
     document.getElementById('m-tx').classList.add('open');
   };
   document.getElementById('open-in').onclick = () => openTx('in');
@@ -302,24 +281,16 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('add-tx').onclick = () => {
     const v = parseFloat(document.getElementById('tx-sum').value);
     if (!v || v <= 0) return;
-    state.txs.push({
-      id: Date.now(), type: txType, byn: state.curr === 'USD' ? v * state.rate : v,
-      cat: document.getElementById('tx-cat').value, br: document.getElementById('tx-br').value,
-      note: document.getElementById('tx-note').value, date: Date.now()
-    });
+    state.txs.push({ id: Date.now(), type: txType, byn: state.curr === 'USD' ? v * state.rate : v, cat: document.getElementById('tx-cat').value, br: document.getElementById('tx-br').value, note: document.getElementById('tx-note').value, date: Date.now() });
     save(); document.getElementById('m-tx').classList.remove('open'); render();
   };
 
   document.getElementById('open-debt').onclick = () => document.getElementById('m-debt').classList.add('open');
   document.getElementById('close-debt').onclick = () => document.getElementById('m-debt').classList.remove('open');
   document.getElementById('add-debt').onclick = () => {
-    const cl = document.getElementById('d-client').value.trim();
-    const v = parseFloat(document.getElementById('d-sum').value);
+    const cl = document.getElementById('d-client').value.trim(), v = parseFloat(document.getElementById('d-sum').value);
     if (!cl || !v || v <= 0) return;
-    state.debts.push({
-      id: Date.now(), client: cl, item: document.getElementById('d-item').value || 'Рассрочка',
-      byn: state.curr === 'USD' ? v * state.rate : v, br: document.getElementById('d-br').value
-    });
+    state.debts.push({ id: Date.now(), client: cl, item: document.getElementById('d-item').value || 'Рассрочка', byn: state.curr === 'USD' ? v * state.rate : v, br: document.getElementById('d-br').value });
     save(); document.getElementById('m-debt').classList.remove('open'); render();
   };
 
@@ -336,10 +307,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('rate-in').value = state.rate;
   document.getElementById('save-set').onclick = () => {
-    const r = parseFloat(document.getElementById('rate-in').value);
-    if (r > 0) state.rate = r;
-    const p = document.getElementById('pin-in').value.trim();
-    if (/^\d{4}$/.test(p)) state.pin = p;
+    const r = parseFloat(document.getElementById('rate-in').value); if (r > 0) state.rate = r;
+    const p = document.getElementById('pin-in').value.trim(); if (/^\d{4}$/.test(p)) state.pin = p;
     save(); render(); alert('Сохранено!');
   };
   document.getElementById('reset-btn').onclick = () => { state.txs = []; state.debts = []; save(); render(); alert('Очищено!'); };
@@ -349,38 +318,16 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   function render() {
-    const d = new Date();
-    const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
-    const monStart = new Date(d.getFullYear(), d.getMonth(), 1).getTime();
-
-    const list = state.txs.filter(t =>
-      (state.branch === 'Все точки' || t.br === state.branch) &&
-      (state.period === 'all' || (state.period === 'day' ? t.date >= dayStart : t.date >= monStart))
-    );
-
-    let inc = 0, out = 0;
-    list.forEach(t => t.type === 'in' ? inc += t.byn : out += t.byn);
-    document.getElementById('net-val').innerText = fmt(inc - out);
-    document.getElementById('in-val').innerText = fmt(inc);
-    document.getElementById('out-val').innerText = fmt(out);
-
-    document.getElementById('tx-list').innerHTML = list.length ? list.slice().reverse().map(t => `
-      <div class="row">
-        <div><div class="row-title">${t.cat}</div><div class="row-sub">${t.br}${t.note ? ' • ' + t.note : ''}</div></div>
-        <div class="row-val ${t.type === 'in' ? 'green' : 'red'}">${t.type === 'in' ? '+' : '−'}${fmt(t.byn)}</div>
-      </div>`).join('') : '<div style="color:var(--sub); font-size:14px; padding:10px 0;">Нет операций</div>';
-
-    let dSum = 0; state.debts.forEach(x => dSum += x.byn);
-    document.getElementById('debt-val').innerText = fmt(dSum);
-    document.getElementById('debt-list').innerHTML = state.debts.length ? state.debts.map(x => `
-      <div class="row">
-        <div><div class="row-title">${x.client}</div><div class="row-sub">${x.item} • ${fmt(x.byn)}</div></div>
-        <button class="btn-sm" style="background:var(--green);" data-close="${x.id}">Закрыть ✓</button>
-      </div>`).join('') : '<div style="color:var(--sub); font-size:14px; padding:10px 0;">Нет долгов</div>';
-  }
-
-  render();
+const d = new Date(), dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime(), monStart = new Date(d.getFullYear(), d.getMonth(), 1).getTime();
+const list = state.txs.filter(t => (state.branch === 'Все точки' || t.br === state.branch) && (state.period === 'all' || (state.period === 'day' ? t.date >= dayStart : t.date >= monStart)));
+let inc = 0, out = 0; list.forEach(t => t.type === 'in' ? inc += t.byn : out += t.byn);
+document.getElementById('net-val').innerText = fmt(inc - out);
+document.getElementById('in-val').innerText = fmt(inc);
+document.getElementById('out-val').innerText = fmt(out);
+document.getElementById('tx-list').innerHTML = list.length ? list.slice().reverse().map(t => <div class="row"><div><div class="row-title">${t.cat}</div><div class="row-sub">${t.br}${t.note ? ' • ' + t.note : ''}</div></div><div class="row-val ${t.type === 'in' ? 'green' : 'red'}">${t.type === 'in' ? '+' : '−'}${fmt(t.byn)}</div></div>).join('') : 'Нет операций';
+let dSum = 0; state.debts.forEach(x => dSum += x.byn);
+document.getElementById('debt-val').innerText = fmt(dSum);
+document.getElementById('debt-list').innerHTML = state.debts.length ? state.debts.map(x => <div class="row"><div><div class="row-title">${x.client}</div><div class="row-sub">${x.item} • ${fmt(x.byn)}</div></div><button class="btn-sm" style="background:var(--green);" data-close="${x.id}">Закрыть ✓</button></div>).join('') : 'Нет долгов';
+}
+render();
 });
-</script>
-</body>
-</html>

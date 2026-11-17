@@ -4,647 +4,383 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>TheApple.by — Финансы</title>
-<script src="https://telegram.org"></script>
 <style>
   :root {
-    --bg: #F2F2F7;
-    --card: #FFFFFF;
-    --text: #000000;
-    --subtext: #8E8E93;
-    --accent: #007AFF;
-    --green: #34C759;
-    --red: #FF3B30;
-    --orange: #FF9500;
-    --border: #E5E5EA;
+    --bg: #F2F2F7; --card: #FFFFFF; --text: #000000; --sub: #8E8E93;
+    --blue: #007AFF; --green: #34C759; --red: #FF3B30; --orange: #FF9500; --line: #E5E5EA;
   }
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; }
-  body { margin: 0; padding: 0; background: var(--bg); color: var(--text); padding-bottom: 90px; }
-  
-  /* PIN Screen */
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  body { margin: 0; padding: 0 0 85px 0; background: var(--bg); color: var(--text); user-select: none; }
+
   #pin-screen {
     position: fixed; inset: 0; background: #000; color: #fff; z-index: 9999;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
   }
-  .pin-logo { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 8px; }
-  .pin-logo span { color: var(--accent); }
-  .pin-sub { color: #8E8E93; font-size: 14px; margin-bottom: 24px; }
-  .pin-dots { display: flex; gap: 14px; margin-bottom: 32px; }
-  .pin-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #555; transition: 0.2s; }
+  .pin-logo { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+  .pin-logo span { color: var(--blue); }
+  .pin-sub { color: var(--sub); font-size: 14px; margin-bottom: 24px; }
+  .pin-dots { display: flex; gap: 14px; margin-bottom: 30px; }
+  .pin-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #555; }
   .pin-dot.active { background: #fff; border-color: #fff; }
-  .pin-pad { display: grid; grid-template-columns: repeat(3, 72px); gap: 16px; }
+  .pin-pad { display: grid; grid-template-columns: repeat(3, 74px); gap: 16px; }
   .pin-btn {
-    width: 72px; height: 72px; border-radius: 50%; background: #1C1C1E; border: none; color: #fff;
-    font-size: 26px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    width: 74px; height: 74px; border-radius: 50%; background: #1C1C1E; border: none;
+    color: #fff; font-size: 26px; font-weight: 500; cursor: pointer;
   }
   .pin-btn:active { background: #3A3A3C; }
 
-  /* Header */
   .header {
     background: var(--card); padding: 14px 16px; position: sticky; top: 0; z-index: 100;
-    border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center;
   }
-  .brand { font-size: 19px; font-weight: 700; letter-spacing: -0.4px; display: flex; align-items: center; gap: 6px; }
-  .brand-badge { background: #000; color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 6px; font-weight: 600; }
-  .currency-toggle {
-    display: flex; background: var(--bg); border-radius: 8px; padding: 2px;
-  }
-  .curr-btn {
-    border: none; background: transparent; padding: 5px 10px; font-size: 13px; font-weight: 600;
-    border-radius: 6px; color: var(--subtext); cursor: pointer;
-  }
-  .curr-btn.active { background: var(--card); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .brand { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+  .badge { background: #000; color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 6px; }
+  .curr-wrap { display: flex; background: var(--bg); border-radius: 8px; padding: 2px; }
+  .curr-btn { border: none; background: transparent; padding: 5px 10px; font-size: 13px; font-weight: 600; border-radius: 6px; color: var(--sub); cursor: pointer; }
+  .curr-btn.active { background: var(--card); color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+  .chips { padding: 10px 16px 0; display: flex; gap: 8px; overflow-x: auto; }
+  .chip { background: var(--card); border: 1px solid var(--line); padding: 6px 12px; border-radius: 16px; font-size: 13px; font-weight: 500; white-space: nowrap; cursor: pointer; }
+  .chip.active { background: #000; color: #fff; border-color: #000; }
 
-  /* Filters */
-  .filters { padding: 12px 16px 0; display: flex; gap: 8px; overflow-x: auto; }
-  .filter-chip {
-    background: var(--card); border: 1px solid var(--border); padding: 6px 12px; border-radius: 16px;
-    font-size: 13px; font-weight: 500; white-space: nowrap; cursor: pointer; color: var(--text);
-  }
-  .filter-chip.active { background: #000; color: #fff; border-color: #000; }
+  .wrap { padding: 14px 16px; }
+  .card { background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+  .lbl { font-size: 13px; color: var(--sub); }
+  .big-num { font-size: 30px; font-weight: 700; margin: 4px 0 14px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border-top: 1px solid var(--line); padding-top: 12px; }
+  .box { background: var(--bg); padding: 10px; border-radius: 12px; }
+  .box-num { font-size: 16px; font-weight: 700; margin-top: 2px; }
+  .green { color: var(--green); } .red { color: var(--red); } .orange { color: var(--orange); }
 
-  /* Container & Cards */
-  .container { padding: 14px 16px; }
-  .card { background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.03); }
-  .profit-label { font-size: 13px; color: var(--subtext); font-weight: 500; }
-  .profit-val { font-size: 32px; font-weight: 700; letter-spacing: -0.8px; margin: 4px 0 14px; }
-  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border-top: 1px solid var(--border); padding-top: 12px; }
-  .stat-box { background: var(--bg); padding: 10px 12px; border-radius: 12px; }
-  .stat-title { font-size: 12px; color: var(--subtext); margin-bottom: 2px; }
-  .stat-num { font-size: 16px; font-weight: 700; }
-  .green { color: var(--green); }
-  .red { color: var(--red); }
-  .orange { color: var(--orange); }
-
-  /* Action Buttons */
   .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-  .btn-act {
-    border: none; padding: 14px; border-radius: 14px; font-size: 15px; font-weight: 600;
-    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; color: #fff;
-  }
-  .btn-in { background: var(--green); }
-  .btn-out { background: var(--red); }
-  .btn-act:active { opacity: 0.85; transform: scale(0.99); }
+  .btn-act { border: none; padding: 14px; border-radius: 14px; font-size: 15px; font-weight: 600; color: #fff; cursor: pointer; }
+  .btn-in { background: var(--green); } .btn-out { background: var(--red); }
 
-  /* List */
-  .sec-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-  .sec-title { font-size: 16px; font-weight: 700; }
-  .tx-item {
-    display: flex; justify-content: space-between; align-items: center; padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .tx-item:last-child { border-bottom: none; padding-bottom: 0; }
-  .tx-left { display: flex; flex-direction: column; gap: 3px; }
-  .tx-cat { font-size: 15px; font-weight: 600; }
-  .tx-meta { font-size: 12px; color: var(--subtext); }
-  .tx-amount { font-size: 16px; font-weight: 700; text-align: right; }
+  .row { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--line); }
+  .row:last-child { border-bottom: none; padding-bottom: 0; }
+  .row-title { font-size: 15px; font-weight: 600; }
+  .row-sub { font-size: 12px; color: var(--sub); margin-top: 2px; }
+  .row-val { font-size: 15px; font-weight: 700; }
 
-  /* Bottom Nav */
-  .nav {
-    position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(10px); border-top: 1px solid var(--border);
-    display: flex; justify-content: space-around; padding: 8px 0 20px; z-index: 100;
-  }
-  .nav-item {
-    border: none; background: none; display: flex; flex-direction: column; align-items: center; gap: 4px;
-    font-size: 11px; font-weight: 600; color: var(--subtext); cursor: pointer;
-  }
-  .nav-item.active { color: var(--accent); }
-  .nav-icon { font-size: 20px; }
+  .nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); border-top: 1px solid var(--line); display: flex; justify-content: space-around; padding: 8px 0 18px; z-index: 100; }
+  .nav-btn { border: none; background: none; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11px; font-weight: 600; color: var(--sub); cursor: pointer; }
+  .nav-btn.active { color: var(--blue); }
 
-  /* Modal */
-  .modal {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200;
-    display: none; align-items: flex-end; justify-content: center;
-  }
+  .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 500; display: none; align-items: flex-end; }
   .modal.open { display: flex; }
-  .modal-box {
-    background: var(--card); width: 100%; max-width: 500px; border-radius: 20px 20px 0 0;
-    padding: 20px 16px 32px; animation: slideUp 0.22s ease-out;
-  }
-  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-  .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-  .modal-title { font-size: 18px; font-weight: 700; }
-  .close-btn { background: var(--bg); border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 16px; cursor: pointer; }
-  
-  .form-group { margin-bottom: 12px; }
-  .form-label { display: block; font-size: 12px; color: var(--subtext); margin-bottom: 5px; font-weight: 600; }
-  .form-input, .form-select {
-    width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border);
-    font-size: 16px; background: var(--bg); color: var(--text); outline: none;
-  }
-  .submit-btn {
-    width: 100%; padding: 14px; border-radius: 14px; border: none; background: #000; color: #fff;
-    font-size: 16px; font-weight: 600; margin-top: 8px; cursor: pointer;
-  }
-  .page { display: none; }
-  .page.active { display: block; }
-  .debt-badge { background: #FFF3CD; color: #856404; font-size: 11px; padding: 2px 7px; border-radius: 6px; font-weight: 600; }
-  .btn-small { background: var(--accent); color: #fff; border: none; padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
+  .modal-box { background: var(--card); width: 100%; border-radius: 20px 20px 0 0; padding: 18px 16px 28px; }
+  .f-group { margin-bottom: 12px; }
+  .f-lbl { display: block; font-size: 12px; color: var(--sub); margin-bottom: 4px; font-weight: 600; }
+  .f-in { width: 100%; padding: 11px; border-radius: 10px; border: 1px solid var(--line); font-size: 16px; background: var(--bg); }
+  .btn-main { width: 100%; padding: 14px; border-radius: 12px; border: none; background: #000; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; }
+  .btn-sm { background: var(--blue); color: #fff; border: none; padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
+  .page { display: none; } .page.active { display: block; }
 </style>
 </head>
 <body>
 
-<!-- PIN экран -->
 <div id="pin-screen">
   <div class="pin-logo"> TheApple<span>.by</span></div>
   <div class="pin-sub" id="pin-msg">Введите PIN-код (демо: 1111)</div>
   <div class="pin-dots">
-    <div class="pin-dot" id="d0"></div>
-    <div class="pin-dot" id="d1"></div>
-    <div class="pin-dot" id="d2"></div>
-    <div class="pin-dot" id="d3"></div>
+    <div class="pin-dot" id="d0"></div><div class="pin-dot" id="d1"></div>
+    <div class="pin-dot" id="d2"></div><div class="pin-dot" id="d3"></div>
   </div>
-  <div class="pin-pad">
-    <button class="pin-btn" onclick="pressPin('1')">1</button>
-    <button class="pin-btn" onclick="pressPin('2')">2</button>
-    <button class="pin-btn" onclick="pressPin('3')">3</button>
-    <button class="pin-btn" onclick="pressPin('4')">4</button>
-    <button class="pin-btn" onclick="pressPin('5')">5</button>
-    <button class="pin-btn" onclick="pressPin('6')">6</button>
-    <button class="pin-btn" onclick="pressPin('7')">7</button>
-    <button class="pin-btn" onclick="pressPin('8')">8</button>
-    <button class="pin-btn" onclick="pressPin('9')">9</button>
+  <div class="pin-pad" id="pin-pad">
+    <button class="pin-btn" data-k="1">1</button><button class="pin-btn" data-k="2">2</button><button class="pin-btn" data-k="3">3</button>
+    <button class="pin-btn" data-k="4">4</button><button class="pin-btn" data-k="5">5</button><button class="pin-btn" data-k="6">6</button>
+    <button class="pin-btn" data-k="7">7</button><button class="pin-btn" data-k="8">8</button><button class="pin-btn" data-k="9">9</button>
     <button class="pin-btn" style="background:transparent"></button>
-    <button class="pin-btn" onclick="pressPin('0')">0</button>
-    <button class="pin-btn" onclick="clearPin()">⌫</button>
+    <button class="pin-btn" data-k="0">0</button><button class="pin-btn" data-k="del">⌫</button>
   </div>
 </div>
 
-<!-- Шапка -->
 <div class="header">
-  <div class="brand"> TheApple.by <span class="brand-badge">PRO</span></div>
-  <div class="currency-toggle">
-    <button class="curr-btn active" id="btn-byn" onclick="setCurrency('BYN')">BYN</button>
-    <button class="curr-btn" id="btn-usd" onclick="setCurrency('USD')">USD</button>
+  <div class="brand"> TheApple.by <span class="badge">PRO</span></div>
+  <div class="curr-wrap">
+    <button class="curr-btn active" id="c-byn">BYN</button>
+    <button class="curr-btn" id="c-usd">USD</button>
   </div>
 </div>
-<!-- СТРАНИЦА 1: КАССА -->
-<div id="page-cash" class="page active">
-  <!-- Фильтр точек -->
-  <div class="filters" id="branch-filters">
-    <button class="filter-chip active" onclick="setBranch('Все точки', this)">Все точки</button>
-    <button class="filter-chip" onclick="setBranch('ТЦ Европа', this)">ТЦ Европа</button>
-    <button class="filter-chip" onclick="setBranch('Немига', this)">Немига</button>
-    <button class="filter-chip" onclick="setBranch('Доставка', this)">Доставка</button>
+<!-- КАССА -->
+<div id="p-cash" class="page active">
+  <div class="chips" id="branch-bar">
+    <button class="chip active" data-b="Все точки">Все точки</button>
+    <button class="chip" data-b="ТЦ Европа">ТЦ Европа</button>
+    <button class="chip" data-b="Немига">Немига</button>
+    <button class="chip" data-b="Доставка">Доставка</button>
+  </div>
+  <div class="chips" id="period-bar">
+    <button class="chip active" data-p="day">Сегодня</button>
+    <button class="chip" data-p="month">Месяц</button>
+    <button class="chip" data-p="all">Всё время</button>
   </div>
 
-  <!-- Фильтр периода -->
-  <div class="filters" style="padding-top:8px;">
-    <button class="filter-chip active" onclick="setPeriod('day', this)">Сегодня</button>
-    <button class="filter-chip" onclick="setPeriod('month', this)">Месяц</button>
-    <button class="filter-chip" onclick="setPeriod('all', this)">Всё время</button>
-  </div>
-
-  <div class="container">
-    <!-- Главная карточка прибыли -->
+  <div class="wrap">
     <div class="card">
-      <div class="profit-label">Чистая прибыль (<span id="period-label">Сегодня</span>)</div>
-      <div class="profit-val" id="net-profit">0 BYN</div>
-      <div class="stats-grid">
-        <div class="stat-box">
-          <div class="stat-title">Выручка (Приход)</div>
-          <div class="stat-num green" id="total-in">0 BYN</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-title">Расходы / Закупка</div>
-          <div class="stat-num red" id="total-out">0 BYN</div>
-        </div>
+      <div class="lbl">Чистая прибыль (<span id="p-lbl">Сегодня</span>)</div>
+      <div class="big-num" id="net-val">0 BYN</div>
+      <div class="grid2">
+        <div class="box"><div class="lbl">Выручка</div><div class="box-num green" id="in-val">0 BYN</div></div>
+        <div class="box"><div class="lbl">Расходы</div><div class="box-num red" id="out-val">0 BYN</div></div>
       </div>
     </div>
 
-    <!-- Кнопки операций -->
     <div class="actions">
-      <button class="btn-act btn-in" onclick="openTxModal('in')">+ Приход</button>
-      <button class="btn-act btn-out" onclick="openTxModal('out')">− Расход</button>
+      <button class="btn-act btn-in" id="open-in">+ Приход</button>
+      <button class="btn-act btn-out" id="open-out">− Расход</button>
     </div>
 
-    <!-- История операций -->
     <div class="card">
-      <div class="sec-header">
-        <div class="sec-title">Операции</div>
-        <button class="btn-small" style="background:#8E8E93;" onclick="copyReport()">Отчет в чат</button>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <b style="font-size:16px;">История операций</b>
+        <button class="btn-sm" style="background:#8E8E93;" id="copy-rep">Отчет в чат</button>
       </div>
       <div id="tx-list"></div>
     </div>
   </div>
 </div>
 
-<!-- СТРАНИЦА 2: ДОЛГИ И РАССРОЧКИ -->
-<div id="page-debts" class="page">
-  <div class="container">
+<!-- РАССРОЧКИ -->
+<div id="p-debts" class="page">
+  <div class="wrap">
     <div class="card">
-      <div class="profit-label">Ожидается по рассрочкам и долгам</div>
-      <div class="profit-val orange" id="total-debts">0 BYN</div>
-      <button class="submit-btn" style="background:var(--accent); margin-top:4px;" onclick="openDebtModal()">+ Добавить рассрочку / долг</button>
+      <div class="lbl">Ожидается по рассрочкам</div>
+      <div class="big-num orange" id="debt-val">0 BYN</div>
+      <button class="btn-main" style="background:var(--blue);" id="open-debt">+ Добавить рассрочку</button>
     </div>
-
     <div class="card">
-      <div class="sec-header">
-        <div class="sec-title">Активные клиенты</div>
-      </div>
+      <b style="font-size:16px; display:block; margin-bottom:8px;">Активные клиенты</b>
       <div id="debt-list"></div>
     </div>
   </div>
 </div>
 
-<!-- СТРАНИЦА 3: НАСТРОЙКИ -->
-<div id="page-settings" class="page">
-  <div class="container">
+<!-- НАСТРОЙКИ -->
+<div id="p-set" class="page">
+  <div class="wrap">
     <div class="card">
-      <div class="sec-title" style="margin-bottom:12px;">Курс валют и безопасность</div>
-      <div class="form-group">
-        <label class="form-label">Курс 1 USD в BYN (для пересчета)</label>
-        <input type="number" step="0.01" class="form-input" id="rate-input" onchange="updateRate(this.value)">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Новый PIN-код (4 цифры)</label>
-        <input type="password" maxlength="4" inputmode="numeric" class="form-input" id="new-pin-input" placeholder="Например: 2580">
-      </div>
-      <button class="submit-btn" onclick="saveSettings()">Сохранить настройки</button>
+      <b style="font-size:16px; display:block; margin-bottom:12px;">Курс и безопасность</b>
+      <div class="f-group"><label class="f-lbl">Курс 1 USD в BYN</label><input type="number" step="0.01" class="f-in" id="rate-in"></div>
+      <div class="f-group"><label class="f-lbl">Новый PIN (4 цифры)</label><input type="password" maxlength="4" inputmode="numeric" class="f-in" id="pin-in" placeholder="1111"></div>
+      <button class="btn-main" id="save-set">Сохранить</button>
     </div>
-
     <div class="card">
-      <div class="sec-title" style="margin-bottom:8px;">Управление базой</div>
-      <div style="font-size:13px; color:var(--subtext); margin-bottom:12px;">Все данные сохраняются локально и в облаке Telegram руководителя.</div>
-      <button class="submit-btn" style="background:var(--red);" onclick="resetDemo()">Очистить демо-данные (сброс)</button>
+      <button class="btn-main" style="background:var(--red);" id="reset-btn">Очистить демо-данные</button>
     </div>
   </div>
 </div>
 
-<!-- Нижняя навигация -->
-<div class="nav">
-  <button class="nav-item active" onclick="switchTab('cash', this)">
-    <span class="nav-icon">💳</span>
-    <span>Касса</span>
-  </button>
-  <button class="nav-item" onclick="switchTab('debts', this)">
-    <span class="nav-icon">📋</span>
-    <span>Рассрочки</span>
-  </button>
-  <button class="nav-item" onclick="switchTab('settings', this)">
-    <span class="nav-icon">⚙️</span>
-    <span>Настройки</span>
-  </button>
+<!-- НИЖНЕЕ МЕНЮ -->
+<div class="nav" id="nav-bar">
+  <button class="nav-btn active" data-tab="cash"><span style="font-size:20px;">💳</span><span>Касса</span></button>
+  <button class="nav-btn" data-tab="debts"><span style="font-size:20px;">📋</span><span>Рассрочки</span></button>
+  <button class="nav-btn" data-tab="set"><span style="font-size:20px;">⚙️</span><span>Настройки</span></button>
 </div>
 
-<!-- Модалка добавления операции -->
-<div class="modal" id="tx-modal">
+<!-- МОДАЛКА ОПЕРАЦИИ -->
+<div class="modal" id="m-tx">
   <div class="modal-box">
-    <div class="modal-head">
-      <div class="modal-title" id="tx-modal-title">Новая операция</div>
-      <button class="close-btn" onclick="closeModal('tx-modal')">✕</button>
+    <div style="display:flex; justify-content:space-between; margin-bottom:14px;">
+      <b style="font-size:18px;" id="m-tx-title">Новая операция</b>
+      <button class="btn-sm" style="background:var(--bg); color:#000;" id="close-tx">✕</button>
     </div>
-    <div class="form-group">
-      <label class="form-label">Сумма (<span id="modal-curr">BYN</span>)</label>
-      <input type="number" inputmode="decimal" class="form-input" id="tx-amount" placeholder="0.00">
+    <div class="f-group"><label class="f-lbl">Сумма (<span id="m-curr">BYN</span>)</label><input type="number" inputmode="decimal" class="f-in" id="tx-sum" placeholder="0"></div>
+    <div class="f-group"><label class="f-lbl">Категория</label><select class="f-in" id="tx-cat"></select></div>
+    <div class="f-group"><label class="f-lbl">Точка</label>
+      <select class="f-in" id="tx-br"><option>ТЦ Европа</option><option>Немига</option><option>Доставка</option></select>
     </div>
-    <div class="form-group">
-      <label class="form-label">Категория</label>
-      <select class="form-select" id="tx-cat"></select>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Точка продаж</label>
-      <select class="form-select" id="tx-branch">
-        <option value="ТЦ Европа">ТЦ Европа</option>
-        <option value="Немига">Немига</option>
-        <option value="Доставка">Доставка</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Комментарий (модель, клиент)</label>
-      <input type="text" class="form-input" id="tx-note" placeholder="Например: iPhone 15 Pro 256 Natural">
-    </div>
-    <button class="submit-btn" id="tx-submit-btn" onclick="addTransaction()">Сохранить</button>
+    <div class="f-group"><label class="f-lbl">Комментарий</label><input type="text" class="f-in" id="tx-note" placeholder="iPhone 15 Pro"></div>
+    <button class="btn-main" id="add-tx">Сохранить</button>
   </div>
 </div>
 
-<!-- Модалка добавления долга -->
-<div class="modal" id="debt-modal">
+<div class="modal" id="m-debt">
   <div class="modal-box">
-    <div class="modal-head">
-      <div class="modal-title">Новая рассрочка / долг</div>
-      <button class="close-btn" onclick="closeModal('debt-modal')">✕</button>
+    <div style="display:flex; justify-content:space-between; margin-bottom:14px;">
+      <b style="font-size:18px;">Новая рассрочка</b>
+      <button class="btn-sm" style="background:var(--bg); color:#000;" id="close-debt">✕</button>
     </div>
-    <div class="form-group">
-      <label class="form-label">Клиент / Телефон</label>
-      <input type="text" class="form-input" id="debt-client" placeholder="Имя или @username">
+    <div class="f-group"><label class="f-lbl">Клиент</label><input type="text" class="f-in" id="d-client" placeholder="Имя / Телефон"></div>
+    <div class="f-group"><label class="f-lbl">Устройство</label><input type="text" class="f-in" id="d-item" placeholder="iPhone 14 Pro"></div>
+    <div class="f-group"><label class="f-lbl">Сумма долга (<span id="d-curr">BYN</span>)</label><input type="number" inputmode="decimal" class="f-in" id="d-sum" placeholder="0"></div>
+    <div class="f-group"><label class="f-lbl">Точка</label>
+      <select class="f-in" id="d-br"><option>ТЦ Европа</option><option>Немига</option><option>Доставка</option></select>
     </div>
-    <div class="form-group">
-      <label class="form-label">Устройство / Примечание</label>
-      <input type="text" class="form-input" id="debt-item" placeholder="iPhone 14 Pro (остаток)">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Сумма долга (<span id="debt-modal-curr">BYN</span>)</label>
-      <input type="number" inputmode="decimal" class="form-input" id="debt-amount" placeholder="0.00">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Точка</label>
-      <select class="form-select" id="debt-branch">
-        <option value="ТЦ Европа">ТЦ Европа</option>
-        <option value="Немига">Немига</option>
-        <option value="Доставка">Доставка</option>
-      </select>
-    </div>
-    <button class="submit-btn" style="background:var(--accent);" onclick="addDebt()">Записать долг</button>
+    <button class="btn-main" style="background:var(--blue);" id="add-debt">Добавить</button>
   </div>
 </div>
-
 <script>
-  const tg = window.Telegram ? window.Telegram.WebApp : null;
-  if (tg) { tg.expand(); tg.ready(); }
-
-  // Состояние приложения (все суммы хранятся в BYN для единого пересчета)
-  let state = {
-    pin: '1111',
-    rate: 3.25,
-    currency: 'BYN',
-    branch: 'Все точки',
-    period: 'day',
-    txs: [],
-    debts: []
+document.addEventListener('DOMContentLoaded', () => {
+  const now = Date.now();
+  let state = JSON.parse(localStorage.getItem('theapple_v2')) || {
+    pin: '1111', rate: 3.25, curr: 'BYN', branch: 'Все точки', period: 'day',
+    txs: [
+      { id: 1, type: 'in', byn: 3450, cat: 'Продажа iPhone', br: 'ТЦ Европа', note: 'iPhone 15 Pro 128', date: now - 1800000 },
+      { id: 2, type: 'out', byn: 2860, cat: 'Закупка техники', br: 'ТЦ Европа', note: 'Закупка iPhone 15 Pro', date: now - 3600000 },
+      { id: 3, type: 'in', byn: 190, cat: 'Аксессуары / Стекла', br: 'Немига', note: 'Чехол + стекло', date: now - 7200000 }
+    ],
+    debts: [
+      { id: 101, client: 'Алексей (+375 29 612-XX-XX)', item: 'iPhone 15 Pro Max', byn: 650, br: 'ТЦ Европа' }
+    ]
   };
 
-  let currentPin = '';
-  let currentTxType = 'in';
+  let pinBuf = '', txType = 'in';
+  const save = () => localStorage.setItem('theapple_v2', JSON.stringify(state));
+  const fmt = (byn) => state.curr === 'USD'
+    ? '$' + (byn / state.rate).toFixed(1).replace(/\.0$/, '')
+    : Math.round(byn).toLocaleString('ru-RU') + ' BYN';
 
-  // Демо-данные для первого запуска
-  function getDemoData() {
-    const now = Date.now();
-    return {
-      pin: '1111',
-      rate: 3.25,
-      currency: 'BYN',
-      branch: 'Все точки',
-      period: 'day',
-      txs: [
-        { id: 1, type: 'in', amountByn: 3450, cat: 'Продажа iPhone', branch: 'ТЦ Европа', note: 'iPhone 15 Pro 128GB', date: now - 3600000 },
-        { id: 2, type: 'out', amountByn: 2860, cat: 'Закупка техники', branch: 'ТЦ Европа', note: 'Закупка iPhone 15 Pro', date: now - 7200000 },
-        { id: 3, type: 'in', amountByn: 185, cat: 'Аксессуары / Стекла', branch: 'Немига', note: 'Чехол MagSafe + стекло', date: now - 10800000 },
-        { id: 4, type: 'out', amountByn: 35, cat: 'Курьер / Доставка', branch: 'Доставка', note: 'Доставка по Минску', date: now - 14400000 },
-        { id: 5, type: 'in', amountByn: 2100, cat: 'Trade-in доплата', branch: 'Немига', note: 'Обмен 13 на 15', date: now - 86400000 * 3 }
-      ],
-      debts: [
-        { id: 101, client: 'Алексей (+375 29 612-XX-XX)', item: 'iPhone 15 Pro Max (рассрочка)', amountByn: 650, branch: 'ТЦ Европа' },
-        { id: 102, client: 'Марина (@marina_minsk)', item: 'AirPods Pro 2', amountByn: 220, branch: 'Немига' }
-      ]
-    };
-  }
+  document.getElementById('pin-pad').addEventListener('click', (e) => {
+    const k = e.target.dataset.k;
+    if (!k) return;
+    if (k === 'del') pinBuf = pinBuf.slice(0, -1);
+    else if (pinBuf.length < 4) pinBuf += k;
 
-  // Загрузка данных (Telegram CloudStorage + localStorage)
-  function loadData() {
-    const local = localStorage.getItem('theapple_fin_v1');
-    if (local) {
-      state = { ...state, ...JSON.parse(local) };
-      initApp();
-    } else if (tg && tg.CloudStorage) {
-      tg.CloudStorage.getItem('theapple_fin_v1', (err, val) => {
-        if (!err && val) {
-          state = { ...state, ...JSON.parse(val) };
-        } else {
-          state = getDemoData();
-          saveData();
-        }
-        initApp();
-      });
-    } else {
-      state = getDemoData();
-      saveData();
-      initApp();
+    for (let i = 0; i < 4; i++) document.getElementById('d' + i).classList.toggle('active', i < pinBuf.length);
+
+    if (pinBuf.length === 4) {
+      if (pinBuf === state.pin) {
+        document.getElementById('pin-screen').style.display = 'none';
+      } else {
+        document.getElementById('pin-msg').innerText = 'Неверный PIN';
+        document.getElementById('pin-msg').style.color = '#FF3B30';
+        setTimeout(() => { pinBuf = ''; for (let i = 0; i < 4; i++) document.getElementById('d' + i).classList.remove('active'); }, 400);
+      }
     }
-  }
+  });
 
-  function saveData() {
-    const str = JSON.stringify(state);
-    localStorage.setItem('theapple_fin_v1', str);
-    if (tg && tg.CloudStorage) {
-      tg.CloudStorage.setItem('theapple_fin_v1', str);
+  const setCurr = (c) => {
+    state.curr = c; save();
+    document.getElementById('c-byn').classList.toggle('active', c === 'BYN');
+    document.getElementById('c-usd').classList.toggle('active', c === 'USD');
+    document.getElementById('m-curr').innerText = c;
+    document.getElementById('d-curr').innerText = c;
+    render();
+  };
+  document.getElementById('c-byn').onclick = () => setCurr('BYN');
+  document.getElementById('c-usd').onclick = () => setCurr('USD');
+
+  document.getElementById('branch-bar').addEventListener('click', (e) => {
+    if (!e.target.dataset.b) return;
+    state.branch = e.target.dataset.b;
+    document.querySelectorAll('#branch-bar .chip').forEach(c => c.classList.remove('active'));
+    e.target.classList.add('active');
+    render();
+  });
+  document.getElementById('period-bar').addEventListener('click', (e) => {
+    if (!e.target.dataset.p) return;
+    state.period = e.target.dataset.p;
+    document.querySelectorAll('#period-bar .chip').forEach(c => c.classList.remove('active'));
+    e.target.classList.add('active');
+    document.getElementById('p-lbl').innerText = e.target.innerText;
+    render();
+  });
+
+  document.getElementById('nav-bar').addEventListener('click', (e) => {
+    const btn = e.target.closest('.nav-btn');
+    if (!btn) return;
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('p-' + btn.dataset.tab).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+
+  const openTx = (type) => {
+    txType = type;
+    document.getElementById('m-tx-title').innerText = type === 'in' ? 'Новый приход' : 'Новый расход';
+    document.getElementById('tx-cat').innerHTML = type === 'in'
+      ? '<option>Продажа iPhone</option><option>Trade-in доплата</option><option>Аксессуары / Стекла</option><option>Ремонт</option>'
+      : '<option>Закупка техники</option><option>Выкуп Trade-in</option><option>Курьер / Доставка</option><option>Реклама / Аренда</option>';
+    document.getElementById('tx-sum').value = '';
+    document.getElementById('tx-note').value = '';
+    document.getElementById('m-tx').classList.add('open');
+  };
+  document.getElementById('open-in').onclick = () => openTx('in');
+  document.getElementById('open-out').onclick = () => openTx('out');
+  document.getElementById('close-tx').onclick = () => document.getElementById('m-tx').classList.remove('open');
+
+  document.getElementById('add-tx').onclick = () => {
+    const v = parseFloat(document.getElementById('tx-sum').value);
+    if (!v || v <= 0) return;
+    state.txs.push({
+      id: Date.now(), type: txType, byn: state.curr === 'USD' ? v * state.rate : v,
+      cat: document.getElementById('tx-cat').value, br: document.getElementById('tx-br').value,
+      note: document.getElementById('tx-note').value, date: Date.now()
+    });
+    save(); document.getElementById('m-tx').classList.remove('open'); render();
+  };
+
+  document.getElementById('open-debt').onclick = () => document.getElementById('m-debt').classList.add('open');
+  document.getElementById('close-debt').onclick = () => document.getElementById('m-debt').classList.remove('open');
+  document.getElementById('add-debt').onclick = () => {
+    const cl = document.getElementById('d-client').value.trim();
+    const v = parseFloat(document.getElementById('d-sum').value);
+    if (!cl || !v || v <= 0) return;
+    state.debts.push({
+      id: Date.now(), client: cl, item: document.getElementById('d-item').value || 'Рассрочка',
+      byn: state.curr === 'USD' ? v * state.rate : v, br: document.getElementById('d-br').value
+    });
+    save(); document.getElementById('m-debt').classList.remove('open'); render();
+  };
+
+  document.getElementById('debt-list').addEventListener('click', (e) => {
+    const id = Number(e.target.dataset.close);
+    if (!id) return;
+    const idx = state.debts.findIndex(d => d.id === id);
+    if (idx > -1) {
+      const d = state.debts[idx];
+      state.txs.push({ id: Date.now(), type: 'in', byn: d.byn, cat: 'Оплата рассрочки', br: d.br, note: d.client, date: Date.now() });
+      state.debts.splice(idx, 1); save(); render();
     }
+  });
+
+  document.getElementById('rate-in').value = state.rate;
+  document.getElementById('save-set').onclick = () => {
+    const r = parseFloat(document.getElementById('rate-in').value);
+    if (r > 0) state.rate = r;
+    const p = document.getElementById('pin-in').value.trim();
+    if (/^\d{4}$/.test(p)) state.pin = p;
+    save(); render(); alert('Сохранено!');
+  };
+  document.getElementById('reset-btn').onclick = () => { state.txs = []; state.debts = []; save(); render(); alert('Очищено!'); };
+  document.getElementById('copy-rep').onclick = () => {
+    const txt = ` Отчет TheApple.by (${state.branch}):\nВыручка: ${document.getElementById('in-val').innerText}\nРасходы: ${document.getElementById('out-val').innerText}\nЧистая прибыль: ${document.getElementById('net-val').innerText}`;
+    navigator.clipboard.writeText(txt); alert('Отчет скопирован!');
+  };
+
+  function render() {
+    const d = new Date();
+    const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+    const monStart = new Date(d.getFullYear(), d.getMonth(), 1).getTime();
+
+    const list = state.txs.filter(t =>
+      (state.branch === 'Все точки' || t.br === state.branch) &&
+      (state.period === 'all' || (state.period === 'day' ? t.date >= dayStart : t.date >= monStart))
+    );
+
+    let inc = 0, out = 0;
+    list.forEach(t => t.type === 'in' ? inc += t.byn : out += t.byn);
+    document.getElementById('net-val').innerText = fmt(inc - out);
+    document.getElementById('in-val').innerText = fmt(inc);
+    document.getElementById('out-val').innerText = fmt(out);
+
+    document.getElementById('tx-list').innerHTML = list.length ? list.slice().reverse().map(t => `
+      <div class="row">
+        <div><div class="row-title">${t.cat}</div><div class="row-sub">${t.br}${t.note ? ' • ' + t.note : ''}</div></div>
+        <div class="row-val ${t.type === 'in' ? 'green' : 'red'}">${t.type === 'in' ? '+' : '−'}${fmt(t.byn)}</div>
+      </div>`).join('') : '<div style="color:var(--sub); font-size:14px; padding:10px 0;">Нет операций</div>';
+
+    let dSum = 0; state.debts.forEach(x => dSum += x.byn);
+    document.getElementById('debt-val').innerText = fmt(dSum);
+    document.getElementById('debt-list').innerHTML = state.debts.length ? state.debts.map(x => `
+      <div class="row">
+        <div><div class="row-title">${x.client}</div><div class="row-sub">${x.item} • ${fmt(x.byn)}</div></div>
+        <button class="btn-sm" style="background:var(--green);" data-close="${x.id}">Закрыть ✓</button>
+      </div>`).join('') : '<div style="color:var(--sub); font-size:14px; padding:10px 0;">Нет долгов</div>';
   }
 
-  function initApp() {
-    document.getElementById('rate-input').value = state.rate;
-    updateCurrencyUI();
-    renderAll();
-  }
-
-  // PIN логика
-  function pressPin(num) {
-    if (currentPin.length < 4) {
-      currentPin += num;
-      updatePinDots();
-      if (currentPin.length === 4) {
-        if (currentPin === state.pin) {
-          document.getElementById('pin-screen').style.display = 'none';
-        } else {
-          document.getElementById('pin-msg').innerText = 'Неверный PIN-код';
-          document.getElementById('pin-msg').style.color = '#FF3B30';
-          setTimeout(() => {
-            currentPin = '';
-pdatePinDots();
-document.getElementById('pin-msg').innerText = 'Введите PIN-код';
-document.getElementById('pin-msg').style.color = '#8E8E93';
-}, 600);
-}
-}
-}
-}
-function clearPin() {
-currentPin = currentPin.slice(0, -1);
-updatePinDots();
-}
-function updatePinDots() {
-for (let i = 0; i < 4; i++) {
-document.getElementById('d' + i).classList.toggle('active', i < currentPin.length);
-}
-}
-// Форматирование денег
-function formatMoney(byn) {
-if (state.currency === 'USD') {
-const usd = byn / state.rate;
-return '$' + usd.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 1 });
-}
-return Math.round(byn).toLocaleString('ru-RU') + ' BYN';
-}
-function setCurrency(curr) {
-state.currency = curr;
-saveData();
-updateCurrencyUI();
-renderAll();
-}
-function updateCurrencyUI() {
-document.getElementById('btn-byn').classList.toggle('active', state.currency === 'BYN');
-document.getElementById('btn-usd').classList.toggle('active', state.currency === 'USD');
-document.getElementById('modal-curr').innerText = state.currency;
-document.getElementById('debt-modal-curr').innerText = state.currency;
-}
-function setBranch(branch, el) {
-state.branch = branch;
-el.parentElement.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
-el.classList.add('active');
-renderAll();
-}
-function setPeriod(period, el) {
-state.period = period;
-el.parentElement.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
-el.classList.add('active');
-const names = { day: 'Сегодня', month: 'Месяц', all: 'Всё время' };
-document.getElementById('period-label').innerText = names[period];
-renderAll();
-}
-// Отрисовка данных
-function renderAll() {
-const now = new Date();
-const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
-const filtered = state.txs.filter(t => {
-const branchOk = state.branch === 'Все точки' || t.branch === state.branch;
-let periodOk = true;
-if (state.period === 'day') periodOk = t.date >= startOfDay;
-if (state.period === 'month') periodOk = t.date >= startOfMonth;
-return branchOk && periodOk;
+  render();
 });
-let totalIn = 0, totalOut = 0;
-filtered.forEach(t => {
-if (t.type === 'in') totalIn += t.amountByn;
-else totalOut += t.amountByn;
-});
-const net = totalIn - totalOut;
-const netEl = document.getElementById('net-profit');
-netEl.innerText = (net > 0 ? '+' : '') + formatMoney(net);
-netEl.style.color = net >= 0 ? 'var(--text)' : 'var(--red)';
-document.getElementById('total-in').innerText = formatMoney(totalIn);
-document.getElementById('total-out').innerText = formatMoney(totalOut);
-const listEl = document.getElementById('tx-list');
-if (filtered.length === 0) {
-listEl.innerHTML = 'Операций за этот период нет';
-} else {
-listEl.innerHTML = filtered.slice().sort((a,b) => b.date - a.date).map(t => {
-const d = new Date(t.date);
-const timeStr = d.toLocaleDateString('ru-RU', { day:'2-digit', month:'2-digit' }) + ' ' + d.toLocaleTimeString('ru-RU', { hour:'2-digit', minute:'2-digit' });
-const sign = t.type === 'in' ? '+' : '−';
-const colorClass = t.type === 'in' ? 'green' : 'red';
-return <div class="tx-item"> <div class="tx-left"> <div class="tx-cat">${t.cat}</div> <div class="tx-meta">${t.branch} • ${timeStr}${t.note ? ' • ' + t.note : ''}</div> </div> <div class="tx-amount ${colorClass}">${sign}${formatMoney(t.amountByn)}</div> </div>;
-}).join('');
-}
-// Отрисовка долгов
-let debtSum = 0;
-state.debts.forEach(d => debtSum += d.amountByn);
-document.getElementById('total-debts').innerText = formatMoney(debtSum);
-const debtListEl = document.getElementById('debt-list');
-if (state.debts.length === 0) {
-debtListEl.innerHTML = 'Активных рассрочек нет';
-} else {
-debtListEl.innerHTML = state.debts.map(d => <div class="tx-item"> <div class="tx-left"> <div class="tx-cat">${d.client}</div> <div class="tx-meta">${d.item} • ${d.branch}</div> <div style="margin-top:4px;"><span class="debt-badge">Долг: ${formatMoney(d.amountByn)}</span></div> </div> <button class="btn-small" style="background:var(--green);" onclick="closeDebt(${d.id})">Закрыть ✓</button> </div>).join('');
-}
-}
-// Модалки
-function openTxModal(type) {
-currentTxType = type;
-document.getElementById('tx-modal-title').innerText = type === 'in' ? 'Новый приход' : 'Новый расход';
-const catSelect = document.getElementById('tx-cat');
-if (type === 'in') {
-catSelect.innerHTML = <option value="Продажа iPhone">Продажа iPhone</option> <option value="Trade-in доплата">Trade-in доплата</option> <option value="Аксессуары / Стекла">Аксессуары / Стекла</option> <option value="Ремонт / Сервис">Ремонт / Сервис</option> <option value="Другой приход">Другой приход</option>;
-} else {
-catSelect.innerHTML = <option value="Закупка техники">Закупка техники</option> <option value="Выкуп Trade-in">Выкуп Trade-in</option> <option value="Курьер / Доставка">Курьер / Доставка</option> <option value="Реклама / Таргет">Реклама / Таргет</option> <option value="Аренда / Зарплата">Аренда / Зарплата</option> <option value="Прочий расход">Прочий расход</option>;
-}
-document.getElementById('tx-amount').value = '';
-document.getElementById('tx-note').value = '';
-document.getElementById('tx-modal').classList.add('open');
-}
-function openDebtModal() {
-document.getElementById('debt-client').value = '';
-document.getElementById('debt-item').value = '';
-document.getElementById('debt-amount').value = '';
-document.getElementById('debt-modal').classList.add('open');
-}
-function closeModal(id) {
-document.getElementById(id).classList.remove('open');
-}
-function addTransaction() {
-const raw = parseFloat(document.getElementById('tx-amount').value);
-if (!raw || raw <= 0) return;
-const amountByn = state.currency === 'USD' ? raw * state.rate : raw;
-state.txs.push({
-id: Date.now(),
-type: currentTxType,
-amountByn: amountByn,
-cat: document.getElementById('tx-cat').value,
-branch: document.getElementById('tx-branch').value,
-note: document.getElementById('tx-note').value.trim(),
-date: Date.now()
-});
-saveData();
-closeModal('tx-modal');
-renderAll();
-}
-function addDebt() {
-const client = document.getElementById('debt-client').value.trim();
-const raw = parseFloat(document.getElementById('debt-amount').value);
-if (!client || !raw || raw <= 0) return;
-const amountByn = state.currency === 'USD' ? raw * state.rate : raw;
-state.debts.push({
-id: Date.now(),
-client: client,
-item: document.getElementById('debt-item').value.trim() || 'Рассрочка',
-amountByn: amountByn,
-branch: document.getElementById('debt-branch').value
-});
-saveData();
-closeModal('debt-modal');
-renderAll();
-}
-function closeDebt(id) {
-const idx = state.debts.findIndex(d => d.id === id);
-if (idx > -1) {
-const debt = state.debts[idx];
-state.txs.push({
-id: Date.now(),
-type: 'in',
-amountByn: debt.amountByn,
-cat: 'Оплата рассрочки',
-branch: debt.branch,
-note: debt.client + ' (' + debt.item + ')',
-date: Date.now()
-});
-state.debts.splice(idx, 1);
-saveData();
-renderAll();
-}
-}
-function switchTab(tab, el) {
-document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-document.getElementById('page-' + tab).classList.add('active');
-document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-el.classList.add('active');
-}
-function updateRate(val) {
-const r = parseFloat(val);
-if (r > 0) { state.rate = r; saveData(); renderAll(); }
-}
-function saveSettings() {
-const newPin = document.getElementById('new-pin-input').value.trim();
-if (newPin.length === 4 && /^\d+$/.test(newPin)) {
-state.pin = newPin;
-document.getElementById('new-pin-input').value = '';
-}
-saveData();
-alert('Настройки сохранены!');
-}
-function resetDemo() {
-if (confirm('Удалить все тестовые операции и начать с нуля?')) {
-state.txs = [];
-state.debts = [];
-saveData();
-renderAll();
-alert('База очищена!');
-}
-}
-function copyReport() {
-const periodName = document.getElementById('period-label').innerText;
-const profit = document.getElementById('net-profit').innerText;
-const inc = document.getElementById('total-in').innerText;
-const out = document.getElementById('total-out').innerText;
-const text =  Отчет TheApple.by (${state.branch} — ${periodName}):\n✅ Выручка: ${inc}\n🔻 Расходы: ${out}\n💰 Чистая прибыль: ${profit};
-navigator.clipboard.writeText(text).then(() => alert('Отчет скопирован в буфер обмена!'));
-}
-loadData();
+</script>
+</body>
+</html>

@@ -1,204 +1,650 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Математика Бизнеса</title>
-  <script src="https://telegram.org"></script>
-  <style>
-    *{box-sizing:border-box;user-select:none;-webkit-tap-highlight-color:transparent;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
-    body{margin:0;background:#0b0f17;color:#fff;display:flex;flex-direction:column;height:100vh;overflow:hidden}
-    .lock{position:fixed;inset:0;background:#0b0f17;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
-    .hd{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;background:#131a26;border-bottom:1px solid #1f293a}
-    .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:10px 16px 0}
-    .tb{background:#131a26;border:1px solid #1f293a;color:#94a3b8;padding:7px 4px;border-radius:10px;font-size:11px;font-weight:700;cursor:pointer}
-    .tb.act{background:#0284c7;color:#fff;border-color:#0284c7}
-    .card{margin:10px 16px;background:linear-gradient(135deg,#131a26,#1e293b);border:1px solid #334155;border-radius:18px;padding:14px}
-    .pval{font-size:30px;font-weight:800;margin:2px 0 8px;color:#10b981}.pval.neg{color:#ef4444}
-    .pbar{width:100%;height:7px;background:#0b0f17;border-radius:99px;overflow:hidden;margin:6px 0 10px}
-    .pfill{height:100%;background:linear-gradient(90deg,#0284c7,#10b981);width:0%;transition:width .3s}
-    .acts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:0 16px 10px}
-    .btn{border:none;padding:11px 6px;border-radius:12px;font-size:12px;font-weight:800;cursor:pointer;color:#fff}
-    .in{background:#10b981}.out{background:#ef4444}.dbt{background:#f59e0b;color:#000}
-    .hist{flex:1;overflow-y:auto;padding:0 16px 10px}
-    .item{background:#131a26;border:1px solid #1f293a;border-radius:12px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-    .fbtn{background:#1e293b;border:1px solid #334155;color:#e2e8f0;padding:10px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer}
-    .mod{position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
-    .mbox{background:#131a26;border:1px solid #334155;border-radius:18px;padding:18px;width:100%;max-width:360px}
-    .inp,select{width:100%;background:#0b0f17;border:1px solid #334155;color:#fff;padding:10px;border-radius:10px;font-size:14px;margin-bottom:9px;outline:none}
-    .tst{position:fixed;top:55px;left:50%;transform:translateX(-50%);background:#0284c7;color:#fff;padding:8px 16px;border-radius:99px;font-size:12px;font-weight:700;z-index:120;display:none;white-space:nowrap}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TheApple.by — Финансы</title>
+<script src="https://telegram.org"></script>
+<style>
+  :root {
+    --bg: #F2F2F7;
+    --card: #FFFFFF;
+    --text: #000000;
+    --subtext: #8E8E93;
+    --accent: #007AFF;
+    --green: #34C759;
+    --red: #FF3B30;
+    --orange: #FF9500;
+    --border: #E5E5EA;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; }
+  body { margin: 0; padding: 0; background: var(--bg); color: var(--text); padding-bottom: 90px; }
+  
+  /* PIN Screen */
+  #pin-screen {
+    position: fixed; inset: 0; background: #000; color: #fff; z-index: 9999;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
+  }
+  .pin-logo { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 8px; }
+  .pin-logo span { color: var(--accent); }
+  .pin-sub { color: #8E8E93; font-size: 14px; margin-bottom: 24px; }
+  .pin-dots { display: flex; gap: 14px; margin-bottom: 32px; }
+  .pin-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #555; transition: 0.2s; }
+  .pin-dot.active { background: #fff; border-color: #fff; }
+  .pin-pad { display: grid; grid-template-columns: repeat(3, 72px); gap: 16px; }
+  .pin-btn {
+    width: 72px; height: 72px; border-radius: 50%; background: #1C1C1E; border: none; color: #fff;
+    font-size: 26px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .pin-btn:active { background: #3A3A3C; }
+
+  /* Header */
+  .header {
+    background: var(--card); padding: 14px 16px; position: sticky; top: 0; z-index: 100;
+    border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
+  }
+  .brand { font-size: 19px; font-weight: 700; letter-spacing: -0.4px; display: flex; align-items: center; gap: 6px; }
+  .brand-badge { background: #000; color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 6px; font-weight: 600; }
+  .currency-toggle {
+    display: flex; background: var(--bg); border-radius: 8px; padding: 2px;
+  }
+  .curr-btn {
+    border: none; background: transparent; padding: 5px 10px; font-size: 13px; font-weight: 600;
+    border-radius: 6px; color: var(--subtext); cursor: pointer;
+  }
+  .curr-btn.active { background: var(--card); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+  /* Filters */
+  .filters { padding: 12px 16px 0; display: flex; gap: 8px; overflow-x: auto; }
+  .filter-chip {
+    background: var(--card); border: 1px solid var(--border); padding: 6px 12px; border-radius: 16px;
+    font-size: 13px; font-weight: 500; white-space: nowrap; cursor: pointer; color: var(--text);
+  }
+  .filter-chip.active { background: #000; color: #fff; border-color: #000; }
+
+  /* Container & Cards */
+  .container { padding: 14px 16px; }
+  .card { background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.03); }
+  .profit-label { font-size: 13px; color: var(--subtext); font-weight: 500; }
+  .profit-val { font-size: 32px; font-weight: 700; letter-spacing: -0.8px; margin: 4px 0 14px; }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border-top: 1px solid var(--border); padding-top: 12px; }
+  .stat-box { background: var(--bg); padding: 10px 12px; border-radius: 12px; }
+  .stat-title { font-size: 12px; color: var(--subtext); margin-bottom: 2px; }
+  .stat-num { font-size: 16px; font-weight: 700; }
+  .green { color: var(--green); }
+  .red { color: var(--red); }
+  .orange { color: var(--orange); }
+
+  /* Action Buttons */
+  .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .btn-act {
+    border: none; padding: 14px; border-radius: 14px; font-size: 15px; font-weight: 600;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; color: #fff;
+  }
+  .btn-in { background: var(--green); }
+  .btn-out { background: var(--red); }
+  .btn-act:active { opacity: 0.85; transform: scale(0.99); }
+
+  /* List */
+  .sec-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .sec-title { font-size: 16px; font-weight: 700; }
+  .tx-item {
+    display: flex; justify-content: space-between; align-items: center; padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .tx-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .tx-left { display: flex; flex-direction: column; gap: 3px; }
+  .tx-cat { font-size: 15px; font-weight: 600; }
+  .tx-meta { font-size: 12px; color: var(--subtext); }
+  .tx-amount { font-size: 16px; font-weight: 700; text-align: right; }
+
+  /* Bottom Nav */
+  .nav {
+    position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(10px); border-top: 1px solid var(--border);
+    display: flex; justify-content: space-around; padding: 8px 0 20px; z-index: 100;
+  }
+  .nav-item {
+    border: none; background: none; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    font-size: 11px; font-weight: 600; color: var(--subtext); cursor: pointer;
+  }
+  .nav-item.active { color: var(--accent); }
+  .nav-icon { font-size: 20px; }
+
+  /* Modal */
+  .modal {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200;
+    display: none; align-items: flex-end; justify-content: center;
+  }
+  .modal.open { display: flex; }
+  .modal-box {
+    background: var(--card); width: 100%; max-width: 500px; border-radius: 20px 20px 0 0;
+    padding: 20px 16px 32px; animation: slideUp 0.22s ease-out;
+  }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .modal-title { font-size: 18px; font-weight: 700; }
+  .close-btn { background: var(--bg); border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 16px; cursor: pointer; }
+  
+  .form-group { margin-bottom: 12px; }
+  .form-label { display: block; font-size: 12px; color: var(--subtext); margin-bottom: 5px; font-weight: 600; }
+  .form-input, .form-select {
+    width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border);
+    font-size: 16px; background: var(--bg); color: var(--text); outline: none;
+  }
+  .submit-btn {
+    width: 100%; padding: 14px; border-radius: 14px; border: none; background: #000; color: #fff;
+    font-size: 16px; font-weight: 600; margin-top: 8px; cursor: pointer;
+  }
+  .page { display: none; }
+  .page.active { display: block; }
+  .debt-badge { background: #FFF3CD; color: #856404; font-size: 11px; padding: 2px 7px; border-radius: 6px; font-weight: 600; }
+  .btn-small { background: var(--accent); color: #fff; border: none; padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
+</style>
 </head>
 <body>
-  <div class="tst" id="tst"></div>
-  <div class="lock" id="lock">
-    <div style="font-size:44px;margin-bottom:10px">🔐</div>
-    <div style="font-size:20px;font-weight:800;margin-bottom:6px">Математика Бизнеса</div>
-    <div style="font-size:13px;color:#94a3b8;margin-bottom:16px">Введите персональный ключ доступа, полученный после активации</div>
-    <input class="inp" id="pin" type="tel" maxlength="4" placeholder="••••" style="max-width:200px;text-align:center;font-size:22px;letter-spacing:6px" />
-    <button class="btn in" style="width:200px;padding:13px;font-size:14px" onclick="unlock()">Войти в систему</button>
+
+<!-- PIN экран -->
+<div id="pin-screen">
+  <div class="pin-logo"> TheApple<span>.by</span></div>
+  <div class="pin-sub" id="pin-msg">Введите PIN-код (демо: 1111)</div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="d0"></div>
+    <div class="pin-dot" id="d1"></div>
+    <div class="pin-dot" id="d2"></div>
+    <div class="pin-dot" id="d3"></div>
+  </div>
+  <div class="pin-pad">
+    <button class="pin-btn" onclick="pressPin('1')">1</button>
+    <button class="pin-btn" onclick="pressPin('2')">2</button>
+    <button class="pin-btn" onclick="pressPin('3')">3</button>
+    <button class="pin-btn" onclick="pressPin('4')">4</button>
+    <button class="pin-btn" onclick="pressPin('5')">5</button>
+    <button class="pin-btn" onclick="pressPin('6')">6</button>
+    <button class="pin-btn" onclick="pressPin('7')">7</button>
+    <button class="pin-btn" onclick="pressPin('8')">8</button>
+    <button class="pin-btn" onclick="pressPin('9')">9</button>
+    <button class="pin-btn" style="background:transparent"></button>
+    <button class="pin-btn" onclick="pressPin('0')">0</button>
+    <button class="pin-btn" onclick="clearPin()">⌫</button>
+  </div>
+</div>
+
+<!-- Шапка -->
+<div class="header">
+  <div class="brand"> TheApple.by <span class="brand-badge">PRO</span></div>
+  <div class="currency-toggle">
+    <button class="curr-btn active" id="btn-byn" onclick="setCurrency('BYN')">BYN</button>
+    <button class="curr-btn" id="btn-usd" onclick="setCurrency('USD')">USD</button>
+  </div>
+</div>
+<!-- СТРАНИЦА 1: КАССА -->
+<div id="page-cash" class="page active">
+  <!-- Фильтр точек -->
+  <div class="filters" id="branch-filters">
+    <button class="filter-chip active" onclick="setBranch('Все точки', this)">Все точки</button>
+    <button class="filter-chip" onclick="setBranch('ТЦ Европа', this)">ТЦ Европа</button>
+    <button class="filter-chip" onclick="setBranch('Немига', this)">Немига</button>
+    <button class="filter-chip" onclick="setBranch('Доставка', this)">Доставка</button>
   </div>
 
-  <div class="hd"><div style="font-size:15px;font-weight:800" id="bn">Мой Бизнес</div><button class="fbtn" style="padding:6px 10px;color:#38bdf8" onclick="openSet()">⚙️ Настройки</button></div>
-  <div class="tabs">
-    <button class="tb act" id="p-day" onclick="setP('day')">Сегодня</button>
-    <button class="tb" id="p-week" onclick="setP('week')">Неделя</button>
-    <button class="tb" id="p-mon" onclick="setP('mon')">Месяц</button>
-    <button class="tb" id="p-debt" onclick="setP('debt')">Долги (<span id="dcnt">0</span>)</button>
+  <!-- Фильтр периода -->
+  <div class="filters" style="padding-top:8px;">
+    <button class="filter-chip active" onclick="setPeriod('day', this)">Сегодня</button>
+    <button class="filter-chip" onclick="setPeriod('month', this)">Месяц</button>
+    <button class="filter-chip" onclick="setPeriod('all', this)">Всё время</button>
   </div>
-  <div class="card">
-    <div style="display:flex;justify-content:space-between;font-size:11px;color:#94a3b8"><span>ЧИСТАЯ ПРИБЫЛЬ</span><span id="glbl">Цель: 0%</span></div>
-    <div class="pval" id="prof">0 BYN</div>
-    <div class="pbar"><div class="pfill" id="gfill"></div></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;border-top:1px solid #334155;padding-top:8px;font-size:11px">
-      <div><div style="color:#94a3b8">Выручка</div><div style="font-size:12px;font-weight:700;color:#10b981" id="inc">0</div></div>
-      <div><div style="color:#94a3b8">Расходы</div><div style="font-size:12px;font-weight:700;color:#ef4444" id="exp">0</div></div>
-      <div><div style="color:#94a3b8">Маржа</div><div style="font-size:12px;font-weight:700;color:#38bdf8" id="mrg">0%</div></div>
+
+  <div class="container">
+    <!-- Главная карточка прибыли -->
+    <div class="card">
+      <div class="profit-label">Чистая прибыль (<span id="period-label">Сегодня</span>)</div>
+      <div class="profit-val" id="net-profit">0 BYN</div>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-title">Выручка (Приход)</div>
+          <div class="stat-num green" id="total-in">0 BYN</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-title">Расходы / Закупка</div>
+          <div class="stat-num red" id="total-out">0 BYN</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Кнопки операций -->
+    <div class="actions">
+      <button class="btn-act btn-in" onclick="openTxModal('in')">+ Приход</button>
+      <button class="btn-act btn-out" onclick="openTxModal('out')">− Расход</button>
+    </div>
+
+    <!-- История операций -->
+    <div class="card">
+      <div class="sec-header">
+        <div class="sec-title">Операции</div>
+        <button class="btn-small" style="background:#8E8E93;" onclick="copyReport()">Отчет в чат</button>
+      </div>
+      <div id="tx-list"></div>
     </div>
   </div>
-  <div class="acts">
-    <button class="btn in" onclick="openTr('in')">+ Приход</button>
-    <button class="btn out" onclick="openTr('out')">– Расход</button>
-    <button class="btn dbt" onclick="openTr('debt')">⏳ В долг</button>
+</div>
+
+<!-- СТРАНИЦА 2: ДОЛГИ И РАССРОЧКИ -->
+<div id="page-debts" class="page">
+  <div class="container">
+    <div class="card">
+      <div class="profit-label">Ожидается по рассрочкам и долгам</div>
+      <div class="profit-val orange" id="total-debts">0 BYN</div>
+      <button class="submit-btn" style="background:var(--accent); margin-top:4px;" onclick="openDebtModal()">+ Добавить рассрочку / долг</button>
+    </div>
+
+    <div class="card">
+      <div class="sec-header">
+        <div class="sec-title">Активные клиенты</div>
+      </div>
+      <div id="debt-list"></div>
+    </div>
   </div>
-  <div class="hist" id="list"></div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 16px 16px;background:#131a26;border-top:1px solid #1f293a">
-    <button class="fbtn" onclick="rep()">📋 Отчет в чат</button>
-    <button class="fbtn" onclick="clr()">🧹 Очистить записи</button>
+</div>
+
+<!-- СТРАНИЦА 3: НАСТРОЙКИ -->
+<div id="page-settings" class="page">
+  <div class="container">
+    <div class="card">
+      <div class="sec-title" style="margin-bottom:12px;">Курс валют и безопасность</div>
+      <div class="form-group">
+        <label class="form-label">Курс 1 USD в BYN (для пересчета)</label>
+        <input type="number" step="0.01" class="form-input" id="rate-input" onchange="updateRate(this.value)">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Новый PIN-код (4 цифры)</label>
+        <input type="password" maxlength="4" inputmode="numeric" class="form-input" id="new-pin-input" placeholder="Например: 2580">
+      </div>
+      <button class="submit-btn" onclick="saveSettings()">Сохранить настройки</button>
+    </div>
+
+    <div class="card">
+      <div class="sec-title" style="margin-bottom:8px;">Управление базой</div>
+      <div style="font-size:13px; color:var(--subtext); margin-bottom:12px;">Все данные сохраняются локально и в облаке Telegram руководителя.</div>
+      <button class="submit-btn" style="background:var(--red);" onclick="resetDemo()">Очистить демо-данные (сброс)</button>
+    </div>
   </div>
-<div class="mod" id="m-tr"><div class="mbox">
-    <div style="font-size:16px;font-weight:800;margin-bottom:12px" id="m-tit">Операция</div>
-    <input class="inp" id="amt" type="number" placeholder="Сумма" /><select id="cat"></select>
-    <input class="inp" id="nte" type="text" placeholder="Клиент или комментарий" />
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="fbtn" onclick="closeM()">Отмена</button><button class="btn in" id="s-btn" onclick="addTr()">Сохранить</button></div>
-  </div></div>
+</div>
 
-  <div class="mod" id="m-set"><div class="mbox">
-    <div style="font-size:16px;font-weight:800;margin-bottom:10px">⚙️ Настройки бизнеса</div>
-    <input class="inp" id="s-name" type="text" placeholder="Название точки" />
-    <select id="s-cur"><option value="BYN">BYN (Бел. рубль)</option><option value="RUB">RUB (Рос. рубль)</option><option value="USD">USD (Доллар)</option><option value="EUR">EUR (Евро)</option><option value="KZT">KZT (Тенге)</option></select>
-    <input class="inp" id="s-goal" type="number" placeholder="Цель прибыли на месяц" />
-    <input class="inp" id="s-cin" type="text" placeholder="Категории прихода через запятую" />
-    <input class="inp" id="s-cout" type="text" placeholder="Категории расхода через запятую" />
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="fbtn" onclick="closeM()">Закрыть</button><button class="btn in" onclick="saveSet()">Применить</button></div>
-    <button class="fbtn" style="width:100%;margin-top:8px;color:#ef4444" onclick="logout()">🔒 Заблокировать экран (PIN)</button>
-  </div></div>
+<!-- Нижняя навигация -->
+<div class="nav">
+  <button class="nav-item active" onclick="switchTab('cash', this)">
+    <span class="nav-icon">💳</span>
+    <span>Касса</span>
+  </button>
+  <button class="nav-item" onclick="switchTab('debts', this)">
+    <span class="nav-icon">📋</span>
+    <span>Рассрочки</span>
+  </button>
+  <button class="nav-item" onclick="switchTab('settings', this)">
+    <span class="nav-icon">⚙️</span>
+    <span>Настройки</span>
+  </button>
+</div>
 
-  <script>
-    const tg = window.Telegram?.WebApp;
-    if (tg) { tg.ready(); tg.expand(); }
-    let mode = '';
-    let cfg = { name: 'Мой Бизнес', cur: 'BYN', goal: 5000, cin: 'Услуга, Товар, Предоплата', cout: 'Аренда, Зарплата, Закупка', tx: new Array(), debts: new Array() };
-    let per = 'day', curType = 'in';
+<!-- Модалка добавления операции -->
+<div class="modal" id="tx-modal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title" id="tx-modal-title">Новая операция</div>
+      <button class="close-btn" onclick="closeModal('tx-modal')">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Сумма (<span id="modal-curr">BYN</span>)</label>
+      <input type="number" inputmode="decimal" class="form-input" id="tx-amount" placeholder="0.00">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Категория</label>
+      <select class="form-select" id="tx-cat"></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Точка продаж</label>
+      <select class="form-select" id="tx-branch">
+        <option value="ТЦ Европа">ТЦ Европа</option>
+        <option value="Немига">Немига</option>
+        <option value="Доставка">Доставка</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Комментарий (модель, клиент)</label>
+      <input type="text" class="form-input" id="tx-note" placeholder="Например: iPhone 15 Pro 256 Natural">
+    </div>
+    <button class="submit-btn" id="tx-submit-btn" onclick="addTransaction()">Сохранить</button>
+  </div>
+</div>
 
-    function tst(m) { const t = document.getElementById('tst'); t.innerText = m; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2200); }
+<!-- Модалка добавления долга -->
+<div class="modal" id="debt-modal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title">Новая рассрочка / долг</div>
+      <button class="close-btn" onclick="closeModal('debt-modal')">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Клиент / Телефон</label>
+      <input type="text" class="form-input" id="debt-client" placeholder="Имя или @username">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Устройство / Примечание</label>
+      <input type="text" class="form-input" id="debt-item" placeholder="iPhone 14 Pro (остаток)">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Сумма долга (<span id="debt-modal-curr">BYN</span>)</label>
+      <input type="number" inputmode="decimal" class="form-input" id="debt-amount" placeholder="0.00">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Точка</label>
+      <select class="form-select" id="debt-branch">
+        <option value="ТЦ Европа">ТЦ Европа</option>
+        <option value="Немига">Немига</option>
+        <option value="Доставка">Доставка</option>
+      </select>
+    </div>
+    <button class="submit-btn" style="background:var(--accent);" onclick="addDebt()">Записать долг</button>
+  </div>
+</div>
 
-    function save() {
-      if (mode !== 'pro') return;
-      const str = JSON.stringify(cfg);
-      try { localStorage.setItem('biz_pro_real', str); } catch (e) {}
-      try { if (tg && tg.CloudStorage) tg.CloudStorage.setItem('biz_pro_real', str); } catch (e) {}
-    }
+<script>
+  const tg = window.Telegram ? window.Telegram.WebApp : null;
+  if (tg) { tg.expand(); tg.ready(); }
 
-    function initProData() {
-      try { const sv = JSON.parse(localStorage.getItem('biz_pro_real')); if (sv) cfg = { ...cfg, ...sv }; } catch (e) {}
-      rn();
-      try {
-        if (tg && tg.CloudStorage) {
-          tg.CloudStorage.getItem('biz_pro_real', (err, val) => {
-            if (!err && val) { cfg = { ...cfg, ...JSON.parse(val) }; rn(); }
-          });
+  // Состояние приложения (все суммы хранятся в BYN для единого пересчета)
+  let state = {
+    pin: '1111',
+    rate: 3.25,
+    currency: 'BYN',
+    branch: 'Все точки',
+    period: 'day',
+    txs: [],
+    debts: []
+  };
+
+  let currentPin = '';
+  let currentTxType = 'in';
+
+  // Демо-данные для первого запуска
+  function getDemoData() {
+    const now = Date.now();
+    return {
+      pin: '1111',
+      rate: 3.25,
+      currency: 'BYN',
+      branch: 'Все точки',
+      period: 'day',
+      txs: [
+        { id: 1, type: 'in', amountByn: 3450, cat: 'Продажа iPhone', branch: 'ТЦ Европа', note: 'iPhone 15 Pro 128GB', date: now - 3600000 },
+        { id: 2, type: 'out', amountByn: 2860, cat: 'Закупка техники', branch: 'ТЦ Европа', note: 'Закупка iPhone 15 Pro', date: now - 7200000 },
+        { id: 3, type: 'in', amountByn: 185, cat: 'Аксессуары / Стекла', branch: 'Немига', note: 'Чехол MagSafe + стекло', date: now - 10800000 },
+        { id: 4, type: 'out', amountByn: 35, cat: 'Курьер / Доставка', branch: 'Доставка', note: 'Доставка по Минску', date: now - 14400000 },
+        { id: 5, type: 'in', amountByn: 2100, cat: 'Trade-in доплата', branch: 'Немига', note: 'Обмен 13 на 15', date: now - 86400000 * 3 }
+      ],
+      debts: [
+        { id: 101, client: 'Алексей (+375 29 612-XX-XX)', item: 'iPhone 15 Pro Max (рассрочка)', amountByn: 650, branch: 'ТЦ Европа' },
+        { id: 102, client: 'Марина (@marina_minsk)', item: 'AirPods Pro 2', amountByn: 220, branch: 'Немига' }
+      ]
+    };
+  }
+
+  // Загрузка данных (Telegram CloudStorage + localStorage)
+  function loadData() {
+    const local = localStorage.getItem('theapple_fin_v1');
+    if (local) {
+      state = { ...state, ...JSON.parse(local) };
+      initApp();
+    } else if (tg && tg.CloudStorage) {
+      tg.CloudStorage.getItem('theapple_fin_v1', (err, val) => {
+        if (!err && val) {
+          state = { ...state, ...JSON.parse(val) };
+        } else {
+          state = getDemoData();
+          saveData();
         }
-      } catch (e) {}
+        initApp();
+      });
+    } else {
+      state = getDemoData();
+      saveData();
+      initApp();
     }
+  }
 
-    function initDemoData() {
-      const n = Date.now();
-      cfg = {
-        name: 'BarberPro Минск (Демо)', cur: 'BYN', goal: 5000,
-        cin: 'Стрижка, Борода, Косметика', cout: 'Аренда, Расходники, Реклама',
-        tx: new Array(
-          { id: 1, t: 'in', a: 280, c: 'Стрижка', n: 'Утренняя смена', d: n - 3600000 },
-          { id: 2, t: 'in', a: 140, c: 'Косметика', n: 'Глина и масло', d: n - 7200000 },
-          { id: 3, t: 'out', a: 85, c: 'Расходники', n: 'Лезвия и полотенца', d: n - 10800000 }
-        ),
-        debts: new Array({ id: 10, a: 95, n: 'Алексей (остаток)', d: n })
-      };
-      rn();
+  function saveData() {
+    const str = JSON.stringify(state);
+    localStorage.setItem('theapple_fin_v1', str);
+    if (tg && tg.CloudStorage) {
+      tg.CloudStorage.setItem('theapple_fin_v1', str);
     }
+  }
 
-    function unlock() {
-      const p = document.getElementById('pin').value.trim();
-      if (p === '7744') {
-        mode = 'pro';
-        try { localStorage.setItem('biz_last_mode', 'pro'); } catch (e) {}
-        document.getElementById('lock').style.display = 'none';
-        initProData(); tst('✅ Рабочая база загружена');
-      } else if (p === '0000') {
-        mode = 'demo';
-        try { localStorage.setItem('biz_last_mode', ''); } catch (e) {}
-        document.getElementById('lock').style.display = 'none';
-        initDemoData(); tst('🔥 Демо-режим (без перезаписи базы)');
-      } else {
-        tst('❌ Неверный PIN-код');
-      }
-    }
+  function initApp() {
+    document.getElementById('rate-input').value = state.rate;
+    updateCurrencyUI();
+    renderAll();
+  }
 
-    function logout() {
-      mode = '';
-      try { localStorage.setItem('biz_last_mode', ''); } catch (e) {}
-      document.getElementById('pin').value = '';
-      closeM(); document.getElementById('lock').style.display = 'flex';
-      tst('🔒 Экран заблокирован');
-    }
-
-    function setP(p) { per = p; document.querySelectorAll('.tb').forEach(b => b.classList.remove('act')); document.getElementById('p-' + p).classList.add('act'); rn(); }
-
-    function rn() {
-      document.getElementById('bn').innerText = cfg.name; document.getElementById('dcnt').innerText = cfg.debts.length;
-      const n = Date.now(), arr = cfg.tx.filter(x => per === 'day' ? (n - x.d) < 86400000 : per === 'week' ? (n - x.d) < 604800000 : (n - x.d) < 2592000000);
-      let inc = 0, exp = 0; arr.forEach(x => { if (x.t === 'in') inc += x.a; else exp += x.a; });
-      const pr = inc - exp, mg = inc > 0 ? Math.round((pr / inc) * 100) : 0, pct = cfg.goal > 0 ? Math.min(100, Math.max(0, Math.round((pr / cfg.goal) * 100))) : 0;
-      const pel = document.getElementById('prof'); pel.innerText = (pr >= 0 ? '+' : '') + pr.toLocaleString() + ' ' + cfg.cur; pel.className = 'pval' + (pr < 0 ? ' neg' : '');
-      document.getElementById('glbl').innerText = 'Цель (' + cfg.goal + '): ' + pct + '%'; document.getElementById('gfill').style.width = pct + '%';
-      document.getElementById('inc').innerText = inc.toLocaleString() + ' ' + cfg.cur; document.getElementById('exp').innerText = exp.toLocaleString() + ' ' + cfg.cur; document.getElementById('mrg').innerText = mg + '%';
-      let h = '';
-      if (per === 'debt') {
-        cfg.debts.slice().reverse().forEach(x => { h += '<div class="item"><div style="font-size:13px;font-weight:700;color:#f59e0b">⏳ ' + x.n + '</div><div><b style="margin-right:8px">' + x.a + ' ' + cfg.cur + '</b><button style="background:#10b981;border:none;border-radius:6px;padding:4px 8px;font-weight:700" onclick="payD(' + x.id + ')">OK</button></div></div>'; });
-      } else {
-        arr.slice().reverse().forEach(x => { const cl = x.t === 'in' ? '#10b981' : '#ef4444'; h += '<div class="item"><div><div style="font-size:13px;font-weight:700">' + x.c + '</div><div style="font-size:11px;color:#94a3b8">' + (x.n || '') + '</div></div><div style="font-weight:800;color:' + cl + '">' + (x.t === 'in' ? '+' : '–') + x.a + ' ' + cfg.cur + ' <span style="color:#64748b;margin-left:6px" onclick="delT(' + x.id + ')">✕</span></div></div>'; });
-      }
-      document.getElementById('list').innerHTML = h || '<div style="text-align:center;color:#64748b;margin-top:30px;font-size:13px">Записей пока нет</div>';
-    }
-
-    function openTr(t) {
-      curType = t; const ce = document.getElementById('cat'), sb = document.getElementById('s-btn');
-      if (t === 'debt') { document.getElementById('m-tit').innerText = '⏳ Записать долг'; ce.style.display = 'none'; sb.className = 'btn dbt'; }
-      else { document.getElementById('m-tit').innerText = t === 'in' ? '➕ Приход' : '➖ Расход'; ce.style.display = 'block'; sb.className = 'btn ' + (t === 'in' ? 'in' : 'out'); ce.innerHTML = (t === 'in' ? cfg.cin : cfg.cout).split(',').map(s => '<option value="' + s.trim() + '">' + s.trim() + '</option>').join(''); }
-      document.getElementById('amt').value = ''; document.getElementById('nte').value = ''; document.getElementById('m-tr').style.display = 'flex';
-    }
-
-    function addTr() {
-      const a = parseFloat(document.getElementById('amt').value); if (!a || a <= 0) return tst('❌ Введите сумму');
-      const n = document.getElementById('nte').value.trim();
-      if (curType === 'debt') cfg.debts.push({ id: Date.now(), a, n: n || 'Клиент', d: Date.now() });
-      else cfg.tx.push({ id: Date.now(), t: curType, a, c: document.getElementById('cat').value, n, d: Date.now() });
-      save(); closeM(); rn(); tst('✅ Сохранено');
-    }
-
-    function payD(id) { const x = cfg.debts.find(i => i.id === id); if (x) { cfg.tx.push({ id: Date.now(), t: 'in', a: x.a, c: 'Погашение долга', n: x.n, d: Date.now() }); cfg.debts = cfg.debts.filter(i => i.id !== id); save(); rn(); tst('💰 Оплачено!'); } }
-    function delT(id) { cfg.tx = cfg.tx.filter(x => x.id !== id); save(); rn(); }
-    function openSet() { document.getElementById('s-name').value = cfg.name; document.getElementById('s-cur').value = cfg.cur; document.getElementById('s-goal').value = cfg.goal; document.getElementById('s-cin').value = cfg.cin; document.getElementById('s-cout').value = cfg.cout; document.getElementById('m-set').style.display = 'flex'; }
-    function saveSet() { cfg.name = document.getElementById('s-name').value.trim() || 'Мой Бизнес'; cfg.cur = document.getElementById('s-cur').value; cfg.goal = parseFloat(document.getElementById('s-goal').value) || 5000; cfg.cin = document.getElementById('s-cin').value; cfg.cout = document.getElementById('s-cout').value; save(); closeM(); rn(); tst('✅ Настройки обновлены'); }
-    function closeM() { document.getElementById('m-tr').style.display = 'none'; document.getElementById('m-set').style.display = 'none'; }
-    function rep() { let inc = 0, exp = 0; cfg.tx.forEach(x => { if (x.t === 'in') inc += x.a; else exp += x.a; }); const txt = '📊 ' + cfg.name + '\nВыручка: ' + inc + ' ' + cfg.cur + '\nРасходы: ' + exp + ' ' + cfg.cur + '\nПрибыль: ' + (inc - exp) + ' ' + cfg.cur; if (navigator.clipboard) navigator.clipboard.writeText(txt); tst('📋 Отчет скопирован!'); }
-    function clr() { cfg.tx = new Array(); cfg.debts = new Array(); save(); rn(); tst('🧹 Записи очищены'); }
-
-    try {
-      if (localStorage.getItem('biz_last_mode') === 'pro') {
-        mode = 'pro'; document.getElementById('lock').style.display = 'none'; initProData();
-      }
-    } catch (e) {}
-  </script>
-</body>
-</html>
+  // PIN логика
+  function pressPin(num) {
+    if (currentPin.length < 4) {
+      currentPin += num;
+      updatePinDots();
+      if (currentPin.length === 4) {
+        if (currentPin === state.pin) {
+          document.getElementById('pin-screen').style.display = 'none';
+        } else {
+          document.getElementById('pin-msg').innerText = 'Неверный PIN-код';
+          document.getElementById('pin-msg').style.color = '#FF3B30';
+          setTimeout(() => {
+            currentPin = '';
+pdatePinDots();
+document.getElementById('pin-msg').innerText = 'Введите PIN-код';
+document.getElementById('pin-msg').style.color = '#8E8E93';
+}, 600);
+}
+}
+}
+}
+function clearPin() {
+currentPin = currentPin.slice(0, -1);
+updatePinDots();
+}
+function updatePinDots() {
+for (let i = 0; i < 4; i++) {
+document.getElementById('d' + i).classList.toggle('active', i < currentPin.length);
+}
+}
+// Форматирование денег
+function formatMoney(byn) {
+if (state.currency === 'USD') {
+const usd = byn / state.rate;
+return '$' + usd.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 1 });
+}
+return Math.round(byn).toLocaleString('ru-RU') + ' BYN';
+}
+function setCurrency(curr) {
+state.currency = curr;
+saveData();
+updateCurrencyUI();
+renderAll();
+}
+function updateCurrencyUI() {
+document.getElementById('btn-byn').classList.toggle('active', state.currency === 'BYN');
+document.getElementById('btn-usd').classList.toggle('active', state.currency === 'USD');
+document.getElementById('modal-curr').innerText = state.currency;
+document.getElementById('debt-modal-curr').innerText = state.currency;
+}
+function setBranch(branch, el) {
+state.branch = branch;
+el.parentElement.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+el.classList.add('active');
+renderAll();
+}
+function setPeriod(period, el) {
+state.period = period;
+el.parentElement.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+el.classList.add('active');
+const names = { day: 'Сегодня', month: 'Месяц', all: 'Всё время' };
+document.getElementById('period-label').innerText = names[period];
+renderAll();
+}
+// Отрисовка данных
+function renderAll() {
+const now = new Date();
+const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+const filtered = state.txs.filter(t => {
+const branchOk = state.branch === 'Все точки' || t.branch === state.branch;
+let periodOk = true;
+if (state.period === 'day') periodOk = t.date >= startOfDay;
+if (state.period === 'month') periodOk = t.date >= startOfMonth;
+return branchOk && periodOk;
+});
+let totalIn = 0, totalOut = 0;
+filtered.forEach(t => {
+if (t.type === 'in') totalIn += t.amountByn;
+else totalOut += t.amountByn;
+});
+const net = totalIn - totalOut;
+const netEl = document.getElementById('net-profit');
+netEl.innerText = (net > 0 ? '+' : '') + formatMoney(net);
+netEl.style.color = net >= 0 ? 'var(--text)' : 'var(--red)';
+document.getElementById('total-in').innerText = formatMoney(totalIn);
+document.getElementById('total-out').innerText = formatMoney(totalOut);
+const listEl = document.getElementById('tx-list');
+if (filtered.length === 0) {
+listEl.innerHTML = 'Операций за этот период нет';
+} else {
+listEl.innerHTML = filtered.slice().sort((a,b) => b.date - a.date).map(t => {
+const d = new Date(t.date);
+const timeStr = d.toLocaleDateString('ru-RU', { day:'2-digit', month:'2-digit' }) + ' ' + d.toLocaleTimeString('ru-RU', { hour:'2-digit', minute:'2-digit' });
+const sign = t.type === 'in' ? '+' : '−';
+const colorClass = t.type === 'in' ? 'green' : 'red';
+return <div class="tx-item"> <div class="tx-left"> <div class="tx-cat">${t.cat}</div> <div class="tx-meta">${t.branch} • ${timeStr}${t.note ? ' • ' + t.note : ''}</div> </div> <div class="tx-amount ${colorClass}">${sign}${formatMoney(t.amountByn)}</div> </div>;
+}).join('');
+}
+// Отрисовка долгов
+let debtSum = 0;
+state.debts.forEach(d => debtSum += d.amountByn);
+document.getElementById('total-debts').innerText = formatMoney(debtSum);
+const debtListEl = document.getElementById('debt-list');
+if (state.debts.length === 0) {
+debtListEl.innerHTML = 'Активных рассрочек нет';
+} else {
+debtListEl.innerHTML = state.debts.map(d => <div class="tx-item"> <div class="tx-left"> <div class="tx-cat">${d.client}</div> <div class="tx-meta">${d.item} • ${d.branch}</div> <div style="margin-top:4px;"><span class="debt-badge">Долг: ${formatMoney(d.amountByn)}</span></div> </div> <button class="btn-small" style="background:var(--green);" onclick="closeDebt(${d.id})">Закрыть ✓</button> </div>).join('');
+}
+}
+// Модалки
+function openTxModal(type) {
+currentTxType = type;
+document.getElementById('tx-modal-title').innerText = type === 'in' ? 'Новый приход' : 'Новый расход';
+const catSelect = document.getElementById('tx-cat');
+if (type === 'in') {
+catSelect.innerHTML = <option value="Продажа iPhone">Продажа iPhone</option> <option value="Trade-in доплата">Trade-in доплата</option> <option value="Аксессуары / Стекла">Аксессуары / Стекла</option> <option value="Ремонт / Сервис">Ремонт / Сервис</option> <option value="Другой приход">Другой приход</option>;
+} else {
+catSelect.innerHTML = <option value="Закупка техники">Закупка техники</option> <option value="Выкуп Trade-in">Выкуп Trade-in</option> <option value="Курьер / Доставка">Курьер / Доставка</option> <option value="Реклама / Таргет">Реклама / Таргет</option> <option value="Аренда / Зарплата">Аренда / Зарплата</option> <option value="Прочий расход">Прочий расход</option>;
+}
+document.getElementById('tx-amount').value = '';
+document.getElementById('tx-note').value = '';
+document.getElementById('tx-modal').classList.add('open');
+}
+function openDebtModal() {
+document.getElementById('debt-client').value = '';
+document.getElementById('debt-item').value = '';
+document.getElementById('debt-amount').value = '';
+document.getElementById('debt-modal').classList.add('open');
+}
+function closeModal(id) {
+document.getElementById(id).classList.remove('open');
+}
+function addTransaction() {
+const raw = parseFloat(document.getElementById('tx-amount').value);
+if (!raw || raw <= 0) return;
+const amountByn = state.currency === 'USD' ? raw * state.rate : raw;
+state.txs.push({
+id: Date.now(),
+type: currentTxType,
+amountByn: amountByn,
+cat: document.getElementById('tx-cat').value,
+branch: document.getElementById('tx-branch').value,
+note: document.getElementById('tx-note').value.trim(),
+date: Date.now()
+});
+saveData();
+closeModal('tx-modal');
+renderAll();
+}
+function addDebt() {
+const client = document.getElementById('debt-client').value.trim();
+const raw = parseFloat(document.getElementById('debt-amount').value);
+if (!client || !raw || raw <= 0) return;
+const amountByn = state.currency === 'USD' ? raw * state.rate : raw;
+state.debts.push({
+id: Date.now(),
+client: client,
+item: document.getElementById('debt-item').value.trim() || 'Рассрочка',
+amountByn: amountByn,
+branch: document.getElementById('debt-branch').value
+});
+saveData();
+closeModal('debt-modal');
+renderAll();
+}
+function closeDebt(id) {
+const idx = state.debts.findIndex(d => d.id === id);
+if (idx > -1) {
+const debt = state.debts[idx];
+state.txs.push({
+id: Date.now(),
+type: 'in',
+amountByn: debt.amountByn,
+cat: 'Оплата рассрочки',
+branch: debt.branch,
+note: debt.client + ' (' + debt.item + ')',
+date: Date.now()
+});
+state.debts.splice(idx, 1);
+saveData();
+renderAll();
+}
+}
+function switchTab(tab, el) {
+document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+document.getElementById('page-' + tab).classList.add('active');
+document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+el.classList.add('active');
+}
+function updateRate(val) {
+const r = parseFloat(val);
+if (r > 0) { state.rate = r; saveData(); renderAll(); }
+}
+function saveSettings() {
+const newPin = document.getElementById('new-pin-input').value.trim();
+if (newPin.length === 4 && /^\d+$/.test(newPin)) {
+state.pin = newPin;
+document.getElementById('new-pin-input').value = '';
+}
+saveData();
+alert('Настройки сохранены!');
+}
+function resetDemo() {
+if (confirm('Удалить все тестовые операции и начать с нуля?')) {
+state.txs = [];
+state.debts = [];
+saveData();
+renderAll();
+alert('База очищена!');
+}
+}
+function copyReport() {
+const periodName = document.getElementById('period-label').innerText;
+const profit = document.getElementById('net-profit').innerText;
+const inc = document.getElementById('total-in').innerText;
+const out = document.getElementById('total-out').innerText;
+const text =  Отчет TheApple.by (${state.branch} — ${periodName}):\n✅ Выручка: ${inc}\n🔻 Расходы: ${out}\n💰 Чистая прибыль: ${profit};
+navigator.clipboard.writeText(text).then(() => alert('Отчет скопирован в буфер обмена!'));
+}
+loadData();
